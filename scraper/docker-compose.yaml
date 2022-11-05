@@ -1,0 +1,10 @@
+version: "3.3"
+services:
+  scraper:
+    image: python
+    build: 
+      context: .
+    volumes: 
+      - .:/usr/src/scraper
+    ports:
+      - "8000:8000"
