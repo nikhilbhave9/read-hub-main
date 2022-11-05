@@ -1,0 +1,13 @@
+version: "3.9"
+services:
+  scraper:
+    image: python
+    build: 
+      context: .
+    command: >
+      sh -c  "pip install -r requirements.txt && 
+              uvicorn main:app --reload"
+    volumes: 
+      - .:/usr/src/scraper
+    ports:
+      - 8000:8000
