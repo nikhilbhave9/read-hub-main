@@ -1,0 +1,21 @@
+version : "2.12"
+services:
+  server:
+    build: ./server
+    ports:
+      - "8000:8000"
+    networks:
+      - mern-app
+
+  frontend:
+    build: ./client
+    stdin_open: true
+    ports:
+      - "5000:5000"
+    networks:
+      - mern-app
+
+
+networks:
+  mern-app:
+    driver: bridge
