@@ -5,9 +5,9 @@ import Navbar from '../components/Navbar'
 
 function Root() {
   return (
-    <div className="App">
+    <div className="App-header">
       <Navbar />
-      <Link to="/login">Login</Link> | {" "}
+      <Link to="/login">Login</Link>
       <Link to="/feed">Feed</Link> 
     </div>
   );
