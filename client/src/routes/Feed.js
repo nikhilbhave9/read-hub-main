@@ -14,6 +14,7 @@ function Feed() {
 
     return (
         <div>
+            <h2>Your Feed</h2>
             <p>
                 {(typeof backendData === 'undefined') ? "Loading" : backendData}
             </p>
