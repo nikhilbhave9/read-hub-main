@@ -1,17 +1,20 @@
 from pymongo import MongoClient
 from dotenv import load_dotenv
+import os
 
 def load_environment_and_connect_client():
     global client
     load_dotenv()
     username = os.getenv("MONGO_USERNAME")
     password = os.getenv("MONGO_PASSWORD")
-    cluster_address = os.getenv("MONGO_CLUSTER_ADDRESS")
-    client = MongoClient(f"mongodb+srv://{username}:{password}@{cluster_address}/test?retryWrites=true&w=majority")
+    client = MongoClient(f"mongodb://{username}:{password}@localhost:27017/")
 
 # initialize a mongodb atlas connection
-def connect_mongo_db_atlas(db_name, collection_name):
+def fetch_collection(db_name, collection_name):
     global client
     db = client[db_name]
     collection = db[collection_name]
     return collection
+
+def find_item_in_collection(collection, query):
+    return collection.find_one(query)
