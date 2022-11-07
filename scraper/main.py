@@ -24,7 +24,5 @@ def read_item(item_id: int, q: Union[str, None] = None):
 @app.post("/new_rss/")
 async def add_new_rss(rss: RSSURL):
     global client
-    print("Adding new RSS feed")
     collection = fetch_collection(client, "urls", "rss")
-    collection.insert_one(rss.dict())
-    return collection.find_one({"url": rss.url})
+    return insert_item_to_collection(collection, rss.dict())
