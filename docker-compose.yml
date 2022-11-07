@@ -1,4 +1,4 @@
-version : "2.12"
+version : "3.3"
 services:
   server:
     build: ./server
@@ -15,6 +15,12 @@ services:
     networks:
       - mern-app
 
+  mongodb:
+        image: mongo:latest
+        container_name: mongo
+        environment: 
+                MONGO_INITDB_ROOT_USERNAME: admin
+                MONGO_INITDB_ROOT_PASSWORD: admin
 
 networks:
   mern-app:

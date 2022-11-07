@@ -2,9 +2,9 @@ version: "3.3"
 services:
   scraper:
     image: python
-    build: 
-      context: .
+    command: sh -c "apk add build-base && apk add libffi-dev && pip install -r requirements.txt"
+    command: uvicorn main:app --reload --host 0.0.0.0
     volumes: 
       - .:/usr/src/scraper
     ports:
-      - "8000:8000"
+      - 8000:8000

@@ -1,7 +1,15 @@
 from typing import Union
 from fastapi import FastAPI
+from pydantic import BaseModel
+
+from network_utils import *
 
 app = FastAPI()
+
+class RSSURL(BaseModel):
+    url: str
+    name: str
+    description: Union[str, None] = None
 
 @app.get("/")
 def read_root():
@@ -10,3 +18,10 @@ def read_root():
 @app.get("/items/{item_id}")
 def read_item(item_id: int, q: Union[str, None] = None):
     return {"item_id": item_id, "q": q}
+
+@app.post("/new_rss/")
+async def add_new_rss(rss: RSSURL):
+    print("Adding new RSS feed")
+    collection = fetch_collection("urls", "rss")
+    collection.insert_one(rss.dict())
+    return collection.find_one({"url": rss.url})

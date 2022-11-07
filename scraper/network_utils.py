@@ -2,6 +2,8 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 
+client = None
+
 def load_environment_and_connect_client():
     global client
     load_dotenv()
@@ -17,4 +19,9 @@ def fetch_collection(db_name, collection_name):
     return collection
 
 def find_item_in_collection(collection, query):
+    global client
     return collection.find_one(query)
+
+def __init__():
+    global client
+    load_environment_and_connect_client()
