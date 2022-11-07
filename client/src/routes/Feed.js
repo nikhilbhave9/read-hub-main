@@ -1,5 +1,6 @@
 import react from 'react'
 import { useState, useEffect } from 'react';
+import '../App.css';
 
 function Feed() {
 
@@ -13,10 +14,14 @@ function Feed() {
     }, []);
 
     return (
-        <div>
-            <p>
-                {(typeof backendData === 'undefined') ? "Loading" : backendData}
-            </p>
+        <div className='App-header'>
+            <h2>Your Feed</h2>
+            <div>
+                <p>
+                    {(typeof backendData === 'undefined') ? "Loading" : backendData}
+                </p>
+            </div>
+
         </div>
 
     );
