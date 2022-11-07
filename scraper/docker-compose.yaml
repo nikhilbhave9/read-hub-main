@@ -7,4 +7,4 @@ services:
     volumes: 
       - .:/usr/src/scraper
     ports:
-      - 8000:8000
+      - 7000:7000
