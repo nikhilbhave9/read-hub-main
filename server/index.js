@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const Article = require('./models/articles');
+const Redis = require('redis');
 
 const url = `mongodb+srv://admin:root@cluster0.s8asufw.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -17,7 +18,11 @@ mongoose.connect(url)
     })
     .catch((err) => {
         console.error(`Error connecting to the database. \n${err}`);
-    })
+    });
+
+
+// Redis 
+const redisClient = Redis.createClient();
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));

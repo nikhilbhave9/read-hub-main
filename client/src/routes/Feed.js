@@ -8,15 +8,28 @@ function Feed() {
     const [backendData, setBackendData] = useState();
 
     useEffect(() => {
-        fetch("/api1")
+        fetch("/api3")
         .then(res => res.json())
-        .then(data => setBackendData(data.message))
+        .then(data => setBackendData(data))
     }, []);
 
+    console.log(backendData);
     return (
         <div className='App-header'>
             <h2>Your Feed</h2>
             <div>
+                <ul>
+                    {
+                        backendData.map(content => {
+                            <li>
+                                
+                                <span>Title: {content.title}</span>
+                                <span>{content.body}</span>
+                            </li>
+                        })
+                    }
+                </ul>
+
                 <p>
                     {(typeof backendData === 'undefined') ? "Loading" : backendData}
                 </p>
