@@ -1,15 +1,13 @@
 from typing import Union
 from fastapi import FastAPI
-from pydantic import BaseModel
 
-from network_utils import *
+from mongo_utils import *
+from parser import handle_xml_link
+from utils import *
+
+from threading import Thread
 
 app = FastAPI()
-
-class RSSURL(BaseModel):
-    url: str
-    name: str
-    description: Union[str, None] = None
 
 client = load_environment_and_connect_client()
 
@@ -17,12 +15,14 @@ client = load_environment_and_connect_client()
 def read_root():
     return {"Hello": "World"}
 
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
-@app.post("/new_rss/")
+@app.post("/new_rss_url")
 async def add_new_rss(rss: RSSURL):
-    global client
     collection = fetch_collection(client, "urls", "rss")
+    xml_parse_thread = Thread(target=handle_xml_link, args=(rss,))
+    xml_parse_thread.start()
     return insert_item_to_collection(collection, rss.dict())
+
+@app.post("/new_url")
+async def add_new_url(url: URL):
+    collection = fetch_collection(client, "urls", "non_rss")
+    return insert_item_to_collection(collection, url.dict())

@@ -12,11 +12,11 @@ def load_environment_and_connect_client():
     password = os.getenv("MONGO_PASSWORD")
     # this is the only way to make inter-container mongo communication work apparently
     # instead of '@localhost:27017' use the name of the container instance, which should be this only
-    client = MongoClient(f"mongodb://{username}:{password}@read_hub-mongo-1/") 
+    client = MongoClient(f"mongodb://{username}:{password}@read-hub-mongo-1/") 
     # client = MongoClient('mongodb+srv://admin:root@cluster0.s8asufw.mongodb.net/?retryWrites=true&w=majority')
     return client
 
-# this function does two levels of sanitization to
+# This function does two levels of sanitization to
 # handle FastAPI's incompetency. First it removes the 
 # key '_id' from the object, because FastAPI doesn't
 # know how parse a key with underscore, then it 
@@ -25,6 +25,9 @@ def load_environment_and_connect_client():
 def sanitize_mongo_object(obj):
     obj['id'] = str(obj.pop("_id"))
     return obj
+
+def sanitize_mongo_objects(objs):
+    return [sanitize_mongo_object(obj) for obj in objs]
 
 # initialize a mongodb atlas connection
 def fetch_collection(client, db_name, collection_name):
@@ -39,7 +42,12 @@ def find_item_in_collection(collection, query):
 def insert_item_to_collection(collection, item):
     collection.insert_one(item)
     return sanitize_mongo_object(collection.find_one(item)) 
-    
+
+# insert list of items to mongodb collection
+def insert_items_to_collection(collection, items):
+    collection.insert_many(items)
+    return sanitize_mongo_objects(collection.find({}))
+
 # update item in mongodb collection
 def update_item_in_collection(collection, query, item):
     collection.update_one(query, {"$set": item}, upsert=True)
