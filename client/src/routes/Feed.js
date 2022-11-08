@@ -8,9 +8,9 @@ function Feed() {
     const [backendData, setBackendData] = useState();
 
     useEffect(() => {
-        fetch("/api3")
+        fetch("/api1")
         .then(res => res.json())
-        .then(data => setBackendData(data))
+        .then(data => setBackendData(data.message))
     }, []);
 
     console.log(backendData);
@@ -18,7 +18,7 @@ function Feed() {
         <div className='App-header'>
             <h2>Your Feed</h2>
             <div>
-                <ul>
+                {/* <ul>
                     {
                         backendData.map(content => {
                             <li>
@@ -28,7 +28,7 @@ function Feed() {
                             </li>
                         })
                     }
-                </ul>
+                </ul> */}
 
                 <p>
                     {(typeof backendData === 'undefined') ? "Loading" : backendData}
