@@ -12,7 +12,8 @@ def load_environment_and_connect_client():
     password = os.getenv("MONGO_PASSWORD")
     # this is the only way to make inter-container mongo communication work apparently
     # instead of '@localhost:27017' use the name of the container instance, which should be this only
-    client = MongoClient(f"mongodb://{username}:{password}@read-hub_mongo_1/") 
+    # client = MongoClient(f"mongodb://{username}:{password}@read-hub_mongo_1/") 
+    client = MongoClient('mongodb+srv://admin:root@cluster0.s8asufw.mongodb.net/?retryWrites=true&w=majority')
     return client
 
 # this function does two levels of sanitization to
