@@ -31,17 +31,17 @@ dbo.connectToServer(function(err) {
     });
 })
 
-// app.get("/", function(req, res) {
-//     res.send("Hello, world!");
-// });
+app.get("/", function(req, res) {
+    res.send("Hello, world!");
+});
 
-// app.get("/api1", function(req, res) {
-//     res.json({ message: "Article 1" });
-// });
+app.get("/api1", function(req, res) {
+    res.json({ message: "Article 1" });
+});
 
-// app.post("/api2", function(req, res) {
-//     console.log(req.body);
-//     const rss_url = new rssUrl(req.body);
-//     console.log(rss_url.name)
+app.post("/api2", function(req, res) {
+    console.log(req.body);
+    const rss_url = new rssUrl(req.body);
+    console.log(rss_url.name)
 
-// })
+})
