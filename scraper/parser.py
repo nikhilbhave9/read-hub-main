@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 from pprint import pprint
 from dateutil.parser import parse as dateutil_parse
 
-from utils import Article, RSSURL, URL, client
-from mongo_utils import *
+from utils import Article, RSSURL, URL
+from mongo_utils import MongoUtils
 
 def find_common_prefix_and_suffix(article: dict):
     """Finds common prefixes and suffixes from a dictionary of strings.
@@ -58,9 +58,11 @@ def handle_xml_link(newsletter: RSSURL):
         article['newsletter'] = newsletter.url
         article_objects.append(article) 
     
-    article_collection = fetch_collection(client, "articles", newsletter.name)
+    mongo_client = MongoUtils(location="remote")
     
-    insert_items_to_collection(article_collection, article_objects)
+    article_collection = mongo_client.fetch_collection("articles", newsletter.name)
+    
+    mongo_client.insert_items_to_collection(article_collection, article_objects)
 
 
 # download xml from link
