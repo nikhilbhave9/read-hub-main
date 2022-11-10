@@ -20,3 +20,5 @@ class URL(RSSURL):
     author_class: str
     date_class: str
     description_class: str
+    
+MONGO_LOCATION = "remote"

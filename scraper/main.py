@@ -9,7 +9,7 @@ from threading import Thread
 
 app = FastAPI()
 
-mongo_client = MongoUtils(location="remote")
+mongo_client = MongoUtils(location=MONGO_LOCATION)
 
 @app.get("/")
 def read_root():

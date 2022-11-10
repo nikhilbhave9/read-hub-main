@@ -6,7 +6,9 @@ from dateutil.parser import parse as dateutil_parse
 
 from utils import Article, RSSURL, URL
 from mongo_utils import MongoUtils
+from utils import MONGO_LOCATION
 
+# TODO: make class object for parser
 def find_common_prefix_and_suffix(article: dict):
     """Finds common prefixes and suffixes from a dictionary of strings.
 
@@ -58,7 +60,7 @@ def handle_xml_link(newsletter: RSSURL):
         article['newsletter'] = newsletter.url
         article_objects.append(article) 
     
-    mongo_client = MongoUtils(location="remote")
+    mongo_client = MongoUtils(location=MONGO_LOCATION)
     
     article_collection = mongo_client.fetch_collection("articles", newsletter.name)
     
