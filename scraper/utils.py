@@ -1,10 +1,6 @@
 from pydantic import BaseModel
 from typing import Union
 
-from mongo_utils import load_environment_and_connect_client
-
-client = load_environment_and_connect_client()
-
 class Article(BaseModel):
     title: str
     link: str
