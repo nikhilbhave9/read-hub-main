@@ -4,9 +4,9 @@ from typing import Union
 class Article(BaseModel):
     title: str
     link: str
-    pubDate: str
     newsletter: str
-    creator: Union[str, None] = None
+    pubDate: Union[str, None] = None
+    author: Union[str, None] = None
     description: Union[str, None] = None
     
 class RSSURL(BaseModel):
@@ -20,5 +20,5 @@ class URL(RSSURL):
     author_class: str
     date_class: str
     description_class: str
-    
+
 MONGO_LOCATION = "remote"

@@ -57,6 +57,7 @@ def handle_xml_link(newsletter: RSSURL):
         pfix, sfix = find_common_prefix_and_suffix(article)
         for k, v in article.items():
             article[k] = v.replace(pfix, '').replace(sfix, '')
+            article[k] = v.replace('\n', '').replace('\t', '').replace('\r', '').strip()
         article['newsletter'] = newsletter.url
         article_objects.append(article) 
     
@@ -90,21 +91,21 @@ def parse_rss(xml):
         for item in items:
             article = dict()
             # parse all rss fields from rss feed item
-            if item.title:
+            if item.title: 
                 article['title'] = item.title.text
-            if item.link and 'http' in item.link.text:
+            if item.link and 'http' in item.link.text: 
                 article['link'] = item.link.text
-            elif item.guid and 'http' in item.guid.text:
+            elif item.guid and 'http' in item.guid.text: 
                 article['link'] = item.guid.text
-            if item.pubDate:
+            if item.pubDate: 
                 article['pubDate'] = dateutil_parse(item.pubDate.text).isoformat()
-            elif item.pubdate:
+            elif item.pubdate: 
                 article['pubDate'] = dateutil_parse(item.pubdate.text).isoformat()
-            if item.description:
+            if item.description: 
                 article['description'] = item.description.text
-            if item.creator:
+            if item.creator: 
                 article['author'] = item.creator.text
-            elif item.author:
+            elif item.author: 
                 article['author'] = item.author.text
             articles.append(article)
         return articles
