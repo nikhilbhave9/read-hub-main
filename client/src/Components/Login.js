@@ -23,7 +23,7 @@ function Login () {
     }
 
     return (
-        <div className='App-header'>
+        <div>
             <h2>Login</h2>
             {/* <input type="text" onChange={getInputValue}/> */}
 

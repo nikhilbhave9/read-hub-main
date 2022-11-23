@@ -2,7 +2,7 @@ import react from 'react'
 import { useState, useEffect } from 'react';
 import '../App.css';
 
-function Feed() {
+function Dashboard() {
 
     // Set State
     const [backendData, setBackendData] = useState();
@@ -15,7 +15,7 @@ function Feed() {
 
     console.log(backendData);
     return (
-        <div className='App-header'>
+        <div>
             <h2>Your Feed</h2>
             <div>
                 {/* <ul>
@@ -40,4 +40,4 @@ function Feed() {
     );
 }
 
-export default Feed;
+export default Dashboard;
