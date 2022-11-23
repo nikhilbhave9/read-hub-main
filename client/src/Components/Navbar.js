@@ -1,6 +1,9 @@
 import * as React from 'react';
 import { Link } from "react-router-dom";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+
+// Components
+import Logout from './Logout';
 
 // Styling 
 import PropTypes from 'prop-types';
@@ -18,9 +21,22 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 
-
+// Google O-Auth
+import { gapi } from 'gapi-script';
+const clientID = "743792005372-l001hnasupsvimqur3hq32pe8ngje3rr.apps.googleusercontent.com"
 
 function Navbar() {
+
+    useEffect(() => {
+        function start() {
+          gapi.client.init({
+            clientId: clientID,
+            scope: ""
+          })
+        };
+        gapi.load('client:auth2', start);
+      });
+    
 
     const [ hasLoggedIn, setHasLoggedIn ] = useState(false);
 
@@ -47,6 +63,7 @@ function Navbar() {
                         <Button variant="contained"><Link to="/dashboard">Feed</Link></Button>
                         <Button variant="contained"><Link to="/settings">Settings</Link></Button>
                         <Button variant="contained"><Link to="/highlights">Highlights</Link></Button>
+                        <Button><Logout /></Button>
                     </Toolbar>
                 </AppBar>
             </Box>
