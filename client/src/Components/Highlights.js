@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import Button from '@mui/material/Button';
 
-function FeedSettings() {
+function Highlights() {
 
     const navigate = useNavigate();
     function handleSubmit(e) {
@@ -10,7 +10,7 @@ function FeedSettings() {
 
     return (
         <div>
-            <h1>Feed Settings</h1>
+            <h1>Highlights</h1>
             <Button variant="contained" type="submit" onClick={handleSubmit}>
                 Back
             </Button>
@@ -18,4 +18,4 @@ function FeedSettings() {
     );
 }
 
-export default FeedSettings;
+export default Highlights;

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Link } from "react-router-dom";
+import { useState } from 'react';
 
 // Styling 
 import PropTypes from 'prop-types';
@@ -20,6 +21,12 @@ import Button from '@mui/material/Button';
 
 
 function Navbar() {
+
+    const [ hasLoggedIn, setHasLoggedIn ] = useState(false);
+
+    // Add conditional rendering based on whether user is logged in or not
+    // If user has logged in, display 3 buttons: Dashboard, Feed Settings, Highlights on the SIDEBAR
+
     return (
         <>
             <Box sx={{ flexGrow: 1 }}>
@@ -37,9 +44,9 @@ function Navbar() {
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                             ReadHub
                         </Typography>
-                        <Button variant="contained"><Link to="/login">Login</Link></Button>
                         <Button variant="contained"><Link to="/dashboard">Feed</Link></Button>
                         <Button variant="contained"><Link to="/settings">Settings</Link></Button>
+                        <Button variant="contained"><Link to="/highlights">Highlights</Link></Button>
                     </Toolbar>
                 </AppBar>
             </Box>
