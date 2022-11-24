@@ -6,7 +6,6 @@ import axios from 'axios';
 // Styling
 import { Container } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import '../App.css';
 
 // Google O-Auth
 import { GoogleLogin } from 'react-google-login';

@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from 'react';
 
 // Components
-import Logout from './Logout';
+import Logout from './Authentication/Logout';
 
 // Styling 
 import PropTypes from 'prop-types';
