@@ -102,6 +102,7 @@ function Signup() {
                 </Button>
 
                 <TextField
+                    required 
                     id="dob"
                     label="Date of Birth"
                     type="date"
@@ -125,6 +126,7 @@ function Signup() {
                     </LocalizationProvider> */}
 
                 <TextField
+                    required
                     id="outlined-subscription-select"
                     select
                     label="Tier"
@@ -140,7 +142,8 @@ function Signup() {
                     ))}
                 </TextField>
 
-                <Typography variant="body1">Start off with up to 3 newsletter URLs</Typography>
+                <Typography variant="body1">Start by entering up to 3 newsletter URLs</Typography>
+                <Typography variant="subtitle2">Or we can start you off with some of our favourites</Typography>
 
                 <TextField
                     fullWidth
