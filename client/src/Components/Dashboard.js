@@ -21,11 +21,11 @@ function Dashboard() {
 
     console.log(backendData);
     return (
-        <Container  align="center">
+        <Container component="main" sx={{ mt: 1, mb: 10 }} maxWidth="lg" align="center">
             <h2>Your Feed</h2>
 
             <Grid container columnSpacing={2}>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={12}>
                     <Paper>
                         <h3>Article 1</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla sapien justo, lobortis sit amet vulputate ac, pretium rhoncus massa. Suspendisse eu massa at nisi laoreet sagittis.</p>
@@ -56,7 +56,7 @@ function Dashboard() {
 
 
 
-            <div>
+            {/* <div>
                 {/* <ul>
                     {
                         backendData.map(content => {
@@ -69,10 +69,10 @@ function Dashboard() {
                     }
                 </ul> */}
 
-                <p>
+               {/* <p>
                     {(typeof backendData === 'undefined') ? "Loading" : backendData}
                 </p>
-            </div>
+            </div> */}
 
 
     </Container>

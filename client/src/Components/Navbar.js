@@ -111,7 +111,7 @@ function Navbar(props) {
               <ThemeProvider theme={theme}>
                 <Button size="small" sx={{ mr: 1 }} color='neutral' variant="text" component={Link} to="/dashboard">Feed</Button>
                 <Button size="small" sx={{ mr: 1 }} color='neutral' variant="text" component={Link} to="/settings">Settings</Button>
-                <Button size="small" color='neutral' variant="text" component={Link} to="/dashboard">Highlights</Button>
+                <Button size="small" color='neutral' variant="text" component={Link} to="/highlights">Highlights</Button>
                 <Button><Logout /></Button>
               </ThemeProvider>
             </Toolbar>
