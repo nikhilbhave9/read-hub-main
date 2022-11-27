@@ -1,4 +1,5 @@
 // ============= WILL BE USED FOR FIRST-TIME SIGNUP =============
+// HOW TO INTEGRATE WITH A GOOGLE SIGNUP (Figure out routing)
 
 // Imports
 import * as React from 'react';

@@ -1,5 +1,4 @@
 // Imports
-import './App.css';
 import { Routes, Route, Link } from "react-router-dom";
 import { useEffect } from 'react';
 
@@ -18,16 +17,7 @@ import { gapi } from 'gapi-script';
 const clientID = "743792005372-l001hnasupsvimqur3hq32pe8ngje3rr.apps.googleusercontent.com"
 
 function App() {
-
-  useEffect(() => {
-    function start() {
-      gapi.client.init({
-        clientId: clientID,
-        scope: ""
-      })
-    };
-    gapi.load('client:auth2', start);
-  });
+ 
 
   return (
     <div>

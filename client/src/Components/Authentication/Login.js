@@ -1,14 +1,21 @@
+// WE WANT A PROTECTED AUTHENTICATION REDIRECT 
+// LOGIN -> Both Login and Signup 
+
 // Imports
 import react from 'react'
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import App from '../../App';
 
 // Styling
-import { Container } from '@mui/material';
+import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
 
 // Google O-Auth
 import { GoogleLogin } from 'react-google-login';
+import Signup from './Signup';
 const clientID = "743792005372-l001hnasupsvimqur3hq32pe8ngje3rr.apps.googleusercontent.com"
 
 function Login() {
@@ -17,8 +24,10 @@ function Login() {
     // Step 2: Add onClick functionality after submission 
     // Step 3: Add useNavigate hook from React Router to redirect to user-specific Dashboard
 
+    const navigate = useNavigate();
     const onSuccess = (res) => {
         console.log('[Login Success] currentUser:', res.profileObj);
+        navigate('/dashboard');
     };
 
     const onFailure = (res) => {
@@ -27,8 +36,10 @@ function Login() {
 
     return (
         <Container align="center">
-            <div id='signInButton'>
-                <GoogleLogin 
+            <Typography variant="h3">Welcome to</Typography>
+            <Typography variant="h1">ReadHub</Typography>
+            <Box id="signinbutton" sx={{ m: 4 }}>
+                <GoogleLogin
                     clientId={clientID}
                     buttonText={"Login"}
                     onSuccess={onSuccess}
@@ -36,8 +47,8 @@ function Login() {
                     cookiePolicy={'single_host_origin'}
                     isSignedIn={true}
                 />
+            </Box>
 
-            </div>
         </Container>
     );
 

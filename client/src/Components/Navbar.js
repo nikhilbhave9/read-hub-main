@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 
 // Components
 import Logout from './Authentication/Logout';
-import ProfileInfo from './ProfileInfo';
 
 // Styling 
 import PropTypes from 'prop-types';
