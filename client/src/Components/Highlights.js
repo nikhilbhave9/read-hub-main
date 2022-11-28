@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
+import Navbar from './Navbar';
+
 // Styling
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
@@ -13,12 +15,16 @@ function Highlights() {
     }
 
     return (
+        <>
+        <Navbar />
         <Container component="main" sx={{ mt: 1, mb: 10 }} maxWidth="lg" align="center">
             <Typography variant="h2">
                 Top Newsletters
             </Typography>
             
         </Container>
+        </>
+
     );
 }
     export default Highlights;

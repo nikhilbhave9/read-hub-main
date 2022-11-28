@@ -1,8 +1,9 @@
 // Imports
-import { Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from "react-router-dom";
 import { useEffect } from 'react';
 
 // Components
+// import DefaultContainer from "./Home";
 import Navbar from './Components/Navbar'
 import Login from './Components/Authentication/Login';
 import Logout from './Components/Authentication/Logout';
@@ -17,20 +18,24 @@ import { gapi } from 'gapi-script';
 const clientID = "743792005372-l001hnasupsvimqur3hq32pe8ngje3rr.apps.googleusercontent.com"
 
 function App() {
- 
+
 
   return (
-    <div>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<Signup />}/>
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/settings" element={<FeedSettings />} />
-        <Route path="/highlights" element={<Highlights />} />
-      </Routes>
-      <Footer />
-    </div>
+    <>
+      <div>
+
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/settings" element={<FeedSettings />} />
+          <Route path="/highlights" element={<Highlights />} />
+        </Routes>
+        <Footer />
+      </div>
+
+      
+    </>
   );
 }
 
