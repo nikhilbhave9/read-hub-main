@@ -6,7 +6,6 @@ import react from 'react'
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import App from '../../App';
 
 // Styling
 import Container from '@mui/material/Container';
@@ -24,6 +23,25 @@ function Login() {
     // Step 2: Add onClick functionality after submission 
     // Step 3: Add useNavigate hook from React Router to redirect to user-specific Dashboard
 
+    function handleCallbackResponse(response) {
+        console.log(response);
+    }
+
+    useEffect(() => {
+        /*global google*/
+        google.accounts.id.initialize({
+            client_id: clientID,
+            callback: handleCallbackResponse
+            });
+
+        google.accounts.id.renderButton(
+            document.getElementById('signInButton'),
+            { theme: 'outline', size: 'large', type: 'standard' }
+        );
+
+    }, []);
+
+
     const navigate = useNavigate();
     const onSuccess = (res) => {
         console.log('[Login Success] currentUser:', res.profileObj);
@@ -38,7 +56,7 @@ function Login() {
         <Container align="center" sx={{ mt: '2rem' }}>
             <Typography variant="h3">Welcome to</Typography>
             <Typography variant="h1">ReadHub</Typography>
-            <Box id="signinbutton" sx={{ m: 4 }}>
+            <Box id="signInButton" sx={{ m: 4 }}>
                 <GoogleLogin
                     clientId={clientID}
                     buttonText={"Login"}

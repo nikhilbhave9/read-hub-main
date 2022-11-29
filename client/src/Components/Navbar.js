@@ -23,8 +23,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
-import ProfileIcon from '@mui/icons-material/AccountCircle';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { createTheme } from '@mui/material/styles';
 import { spacing } from '@mui/system';
 
@@ -47,6 +46,13 @@ const theme = createTheme({
   },
 });
 
+// Json data about profile (replace with DB code)
+const profileData = {
+  name: 'John',
+  email: 'johndoe@gmail.com',
+  dp: 'https://media.istockphoto.com/id/1210939712/vector/user-icon-people-icon-isolated-on-white-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=vKDH9j7PPMN-AiUX8vsKlmOonwx7wjqdKiLge7PX1ZQ=',
+  subscription: 'Premium'
+};
 
 const drawerWidth = 160;
 
@@ -59,12 +65,32 @@ function Navbar(props) {
   };
 
   const drawer = (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <List>
         <ListItem>
           {/* Enter Profile Information */}
-          <h3>Profile Information</h3>
+          <Typography variant="h6">Profile Information</Typography>
         </ListItem>
+
+        <ListItem>
+          <img src={profileData.dp} alt="Profile Picture" width={drawerWidth - 40} height={drawerWidth - 60} />
+        </ListItem>
+        <ListItem>
+          <ListItemText primary={`Hi, ${profileData.name}!`} />
+        </ListItem>
+        <ListItem>
+          <ListItemText secondary={`Subscription: ${profileData.subscription}`} />
+        </ListItem>
+
+        <ListItem disablePadding>
+          <ListItemButton component="a" href="/settings">
+            <ListItemIcon>
+              <SettingsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Edit" />
+          </ListItemButton>
+        </ListItem>
+
         <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
           <ListItem button component={Link} to="/dashboard">Feed</ListItem>
           <ListItem button component={Link} to="/settings">Settings</ListItem>

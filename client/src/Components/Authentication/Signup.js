@@ -66,7 +66,7 @@ function Signup() {
 
 
     return (
-        <Container align="center">
+        <Container align="center" sx={{ mt: "2rem", mb: "2rem"}}>
             <Typography variant='h3'>Set up your profile</Typography>
             <Stack
                 component="form"
