@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 const clientID = "743792005372-l001hnasupsvimqur3hq32pe8ngje3rr.apps.googleusercontent.com"
 
-function Logout() {
+function Logout(props) {
 
     const navigate = useNavigate();
     const onSuccess = (res) => {

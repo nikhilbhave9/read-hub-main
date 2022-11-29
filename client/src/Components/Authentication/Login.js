@@ -6,6 +6,12 @@ import react from 'react'
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import jwt_decode from "jwt-decode";
+
+// Redux
+import { useSelector, useDispatch } from 'react-redux';
+import { login } from '../../userSlice';
+
 
 // Styling
 import Container from '@mui/material/Container';
@@ -23,8 +29,28 @@ function Login() {
     // Step 2: Add onClick functionality after submission 
     // Step 3: Add useNavigate hook from React Router to redirect to user-specific Dashboard
 
+
+    // Redux to manage user state
+    const user = useSelector(state => state.user); // Use the userReducer called "user"
+    const dispatch = useDispatch(); // Use the dispatch function to update the userReducer
+
+
+
+
+
+    // const [ user, setUser ] = useState({});
+    const navigate = useNavigate();
+
+
+
     function handleCallbackResponse(response) {
-        console.log(response);
+        var userObject = jwt_decode(response.credential);
+        console.log(userObject);
+
+        // Use Redux to set state of user
+        dispatch(login(userObject)); // Here, login is the action and userObject is the action.payload 
+
+        // navigate('/dashboard');
     }
 
     useEffect(() => {
@@ -32,7 +58,7 @@ function Login() {
         google.accounts.id.initialize({
             client_id: clientID,
             callback: handleCallbackResponse
-            });
+        });
 
         google.accounts.id.renderButton(
             document.getElementById('signInButton'),
@@ -42,7 +68,7 @@ function Login() {
     }, []);
 
 
-    const navigate = useNavigate();
+
     const onSuccess = (res) => {
         console.log('[Login Success] currentUser:', res.profileObj);
         navigate('/dashboard');
@@ -57,16 +83,18 @@ function Login() {
             <Typography variant="h3">Welcome to</Typography>
             <Typography variant="h1">ReadHub</Typography>
             <Box id="signInButton" sx={{ m: 4 }}>
-                <GoogleLogin
+                {/* <GoogleLogin
                     clientId={clientID}
                     buttonText={"Login"}
                     onSuccess={onSuccess}
                     onFailure={onFailure}
                     cookiePolicy={'single_host_origin'}
                     isSignedIn={true}
-                />
+                /> */}
             </Box>
-
+            <Box>
+                {user.user.given_name}
+            </Box>
         </Container>
     );
 
