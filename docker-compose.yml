@@ -6,6 +6,9 @@ services:
             - "8000:8000"
         networks:
             - mern-app
+        depends_on:
+            - mongo
+            - cache
 
     frontend:
         build: ./client
@@ -46,6 +49,15 @@ services:
             - ./scraper:/usr/src/scraper
         ports:
             - 7000:7000
+        networks:
+            - mern-app
+
+    cache:
+        image: "redis"
+        volumes:
+            - ./cache:/etc/redis
+        ports:
+            - "6379:6379"
         networks:
             - mern-app
 
