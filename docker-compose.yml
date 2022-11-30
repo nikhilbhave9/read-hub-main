@@ -9,6 +9,9 @@ services:
         depends_on:
             - mongo
             - cache
+        links:
+            - "mongo:mongo"
+            - "cache:cache"
 
     frontend:
         build: ./client
@@ -40,6 +43,8 @@ services:
             ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
         networks: 
             - mern-app
+        depends_on:
+            - mongo
 
     scraper:
         image: python
@@ -51,11 +56,16 @@ services:
             - 7000:7000
         networks:
             - mern-app
+        links:
+            - "cache:cache"
+            - "mongo:mongo"
+        depends_on:
+            - cache
 
     cache:
-        image: "redis"
+        build: ./cache
         volumes:
-            - ./cache:/etc/redis
+            - ./cache:/usr/src/cache
         ports:
             - "6379:6379"
         networks:

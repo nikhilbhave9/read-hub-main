@@ -5,12 +5,33 @@ const articleSchema = new Schema({
     title: {
         type: String,
         required: true
-    }, 
-    body: {
-        type:  String,
+    },
+    link: {
+        type: String,
         required: true
+    },
+    newsletter: {
+        type: String,
+        required: true
+    },
+    pubDate: {
+        type: String,
+        required: false
+    },
+    author: {
+        type: String,
+        required: false
+    },
+    description: {
+        type: String,
+        required: false
     }
 });
 
-const Article = mongoose.model('Article', articleSchema);
+const myDb = mongoose.connection.useDb('articles');
+
+// const Article = mongoose.model('Article', articleSchema);
+// module.exports = Article;
+
+const Article = myDb.model('Article', articleSchema);
 module.exports = Article;
