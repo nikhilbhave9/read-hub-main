@@ -33,17 +33,20 @@ const app = express();
 
 let redisClient;
 
-(async () => {
+(async() => {
+    // create redis client
     redisClient = Redis.createClient({
         socket: {
-            host: 'cache',
-            port: 6379
+            host: 'cache', // redis container has been given the hostname cache, simplifies things
+            port: 6379 // default port
         },
-        password: 'foobared'
+        password: 'foobared' // default password, should change
     });
 
+    // redis error handler
     redisClient.on("error", (error) => console.error("Redis Error: " + error));
 
+    // asynchronous connection instantation
     await redisClient.connect().then(() => {
         console.log('Connected to Redis');
     }).catch((err) => {
@@ -68,7 +71,6 @@ app.post("/api2", function (req, res) {
     console.log(req.body);
     const rss_url = new rssUrl(req.body);
     console.log(rss_url.name)
-
 })
 
 
@@ -82,11 +84,11 @@ app.get("/api3", function (req, res) {
         })
 });
 
-app.post("/mongoTest", async (req, res) => {
-    console.log(req.body);
-
+app.post("/mongoTest", async(req, res) => {
+    // create new mongodb document instance based on mongoose model
     const article = new Article(req.body);
     console.log(article);
+
     // push to mongo database
     try {
         const newArticle = await article.save();
@@ -94,45 +96,18 @@ app.post("/mongoTest", async (req, res) => {
     } catch (err) {
         res.status(400).json({ message: err.message });
     }
-
 })
 
 
 app.post("/redisSet", async (req, res) => {
     console.log(req.body);
-
-    await redisClient.set(req.body.key_, JSON.stringify(req.body.value_));
-
-    // redisClient.set(req.body.key_, req.body.value_, function(err, reply) {
-    //     if (err) {
-    //         console.log(err);
-    //     } else {
-    //         console.log(reply);
-    //     }
-    // })
-
+    await redisClient.set(req.body.key, JSON.stringify(req.body.value));
     res.json({ message: "Redis Set" });
 })
 
 app.get("/redisGet", async (req, res) => {
     console.log(req.body);
-    // redisClient.get(req.body.key_, function(err, reply) {
-    //     if (err) {
-    //         console.log(err);
-    //     } else {
-    //         console.log(reply);
-    //     }
-    // })
-
-    const cachedResults = await redisClient.get(req.body.key_);
-
-    // try {
-    //     const reply = await getAsync(req.body.key_);
-    //     console.log(reply);
-    // } catch (error) {
-    //     console.log(error);
-    // }
-
+    const cachedResults = await redisClient.get(req.body.key);
     res.json({ message: cachedResults });
 })
 

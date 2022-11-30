@@ -1,0 +1,7 @@
+journal/
+diagnostic.data/
+.mongodb/
+*.wt
+mongod.lock
+storage.bson
+WiredTiger*

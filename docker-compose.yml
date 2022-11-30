@@ -4,6 +4,7 @@ services:
         build: ./server
         ports:
             - "8000:8000"
+        restart: always
         networks:
             - mern-app
         depends_on:
@@ -29,6 +30,8 @@ services:
             MONGO_INITDB_ROOT_PASSWORD: example
         ports:
             - 27017:27017
+        volumes:
+            - ./mongodb:/data/db
         networks:
             - mern-app
 
@@ -49,6 +52,7 @@ services:
     scraper:
         image: python
         build: ./scraper
+        restart: always
         command: uvicorn main:app --reload --host 0.0.0.0 --port 7000
         volumes: 
             - ./scraper:/usr/src/scraper
@@ -64,8 +68,9 @@ services:
 
     cache:
         build: ./cache
+        restart: always
         volumes:
-            - ./cache:/usr/src/cache
+            - ./cache:/data
         ports:
             - "6379:6379"
         networks:
