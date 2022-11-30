@@ -34,9 +34,9 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "http://localhost:8000",
+  "proxy": "http://host.docker.internal:8000",
   "scriptsComments": {
-    "alternateproxy": "http://host.docker.internal:8000"
+    "alternateproxy": "http://localhost:8000"
   },
   "eslintConfig": {
     "extends": [

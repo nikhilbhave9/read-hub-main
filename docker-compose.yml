@@ -14,7 +14,7 @@ services:
         build: ./client
         stdin_open: true
         ports:
-            - "5000:5000"
+            - "5000:80"
         networks:
             - mern-app
 
