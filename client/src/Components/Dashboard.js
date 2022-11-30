@@ -13,15 +13,15 @@ import Paper from '@mui/material/Paper';
 function Dashboard() {
 
     // Set State
-    const [backendData, setBackendData] = useState();
+    // const [backendData, setBackendData] = useState();
 
-    useEffect(() => {
-        fetch("/api1")
-            .then(res => res.json())
-            .then(data => setBackendData(data.message))
-    }, []);
+    // useEffect(() => {
+    //     fetch("/api1")
+    //         .then(res => res.json())
+    //         .then(data => setBackendData(data.message))
+    // }, []);
 
-    console.log(backendData);
+    // console.log(backendData);
     return (
         <>
             <Navbar />

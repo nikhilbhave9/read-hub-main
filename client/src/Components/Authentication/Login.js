@@ -10,7 +10,7 @@ import jwt_decode from "jwt-decode";
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
-import { login } from '../../userSlice';
+import { login, selectUser } from '../../userSlice';
 
 
 // Styling
@@ -45,12 +45,12 @@ function Login() {
 
     function handleCallbackResponse(response) {
         var userObject = jwt_decode(response.credential);
+        console.log("User logged in successfully!");
         console.log(userObject);
 
-        // Use Redux to set state of user
+        // Use Redux to set state of user AND set status to authenticated 
         dispatch(login(userObject)); // Here, login is the action and userObject is the action.payload 
-
-        // navigate('/dashboard');
+        navigate('/dashboard');
     }
 
     useEffect(() => {
@@ -69,19 +69,24 @@ function Login() {
 
 
 
-    const onSuccess = (res) => {
-        console.log('[Login Success] currentUser:', res.profileObj);
-        navigate('/dashboard');
-    };
+    // const onSuccess = (res) => {
+    //     console.log('[Login Success] currentUser:', res.profileObj);
+    //     navigate('/dashboard');
+    // };
 
-    const onFailure = (res) => {
-        console.log('[Login failed] res:', res);
-    };
+    // const onFailure = (res) => {
+    //     console.log('[Login failed] res:', res);
+    // };
+
+    // Get user from user (Redux)
+    const currentUser = useSelector(state => state.user); // Use the userReducer called "user"
 
     return (
         <Container align="center" sx={{ mt: '2rem' }}>
             <Typography variant="h3">Welcome to</Typography>
             <Typography variant="h1">ReadHub</Typography>
+
+
             <Box id="signInButton" sx={{ m: 4 }}>
                 {/* <GoogleLogin
                     clientId={clientID}
@@ -92,9 +97,8 @@ function Login() {
                     isSignedIn={true}
                 /> */}
             </Box>
-            <Box>
-                {user.user.given_name}
-            </Box>
+
+
         </Container>
     );
 

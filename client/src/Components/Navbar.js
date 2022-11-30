@@ -95,7 +95,7 @@ function Navbar(props) {
           <ListItem button component={Link} to="/dashboard">Feed</ListItem>
           <ListItem button component={Link} to="/settings">Settings</ListItem>
           <ListItem button component={Link} to="/dashboard">Highlights</ListItem>
-          <ListItemButton><Logout /></ListItemButton>
+          <ListItem><Logout /></ListItem>
         </Box>
       </List>
     </Box>
