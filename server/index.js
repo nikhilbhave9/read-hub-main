@@ -15,12 +15,10 @@ const mongo_password = process.env.MONGO_PASSWORD;
 
 const url = `mongodb://${mongo_username}:${mongo_password}@mongo/`;
 
-// const connectionParams={
-//     useNewUrlParser: true,
-//     useCreateIndex: true,
-//     useUnifiedTopology: true 
-// }
-mongoose.connect(url)
+mongoose.connect(url, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: 'content'})
     .then(() => {
         console.log('Connected to database ')
     })
@@ -31,6 +29,7 @@ mongoose.connect(url)
 
 
 const app = express();
+// app.use(express.urlencoded());
 
 let redisClient;
 
@@ -60,22 +59,22 @@ app.use(bodyParser.json());
 
 const port = process.env.PORT || 8000;
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
     res.send("Hello, world!");
 });
 
-app.get("/api1", function(req, res) {
+app.get("/api1", function (req, res) {
     res.json({ message: "Article 1" });
 });
 
-app.post("/api2", function(req, res) {
+app.post("/api2", function (req, res) {
     console.log(req.body);
     const rss_url = new rssUrl(req.body);
     console.log(rss_url.name)
 })
 
 
-app.get("/api3", function(req, res) {
+app.get("/api3", function (req, res) {
     Article.find()
         .then((result) => {
             res.json(result);
@@ -100,13 +99,13 @@ app.post("/mongoTest", async(req, res) => {
 })
 
 
-app.post("/redisSet", async(req, res) => {
+app.post("/redisSet", async (req, res) => {
     console.log(req.body);
     await redisClient.set(req.body.key, JSON.stringify(req.body.value));
     res.json({ message: "Redis Set" });
 })
 
-app.get("/redisGet", async(req, res) => {
+app.get("/redisGet", async (req, res) => {
     console.log(req.body);
     const cachedResults = await redisClient.get(req.body.key);
     res.json({ message: cachedResults });
