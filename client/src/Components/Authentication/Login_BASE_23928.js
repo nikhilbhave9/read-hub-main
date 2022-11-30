@@ -19,10 +19,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 
 // Google O-Auth
-<<<<<<< HEAD
-=======
-
->>>>>>> add-nginx-webserver
+import { GoogleLogin } from 'react-google-login';
 import Signup from './Signup';
 const clientID = "743792005372-l001hnasupsvimqur3hq32pe8ngje3rr.apps.googleusercontent.com"
 
