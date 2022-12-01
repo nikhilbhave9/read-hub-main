@@ -6,10 +6,17 @@ const cors = require('cors');
 const Redis = require('redis');
 const dotenv = require('dotenv');
 
+// Mongoose Models
 const Article = require('./models/articles');
+const User = require('./models/users');
+const Subscription = require('./models/subscriptions');
+const Website = require('./models/websites');
+
 
 dotenv.config()
 
+
+// MongoDB Connection 
 const mongo_username = process.env.MONGO_USERNAME;
 const mongo_password = process.env.MONGO_PASSWORD;
 
@@ -30,6 +37,9 @@ mongoose.connect(url, {
 
 const app = express();
 // app.use(express.urlencoded());
+
+
+// ====================== Redis ======================
 
 let redisClient;
 
@@ -53,6 +63,11 @@ let redisClient;
         console.error(`Error connecting to Redis. \n${err}`);
     });
 })();
+
+// ===================================================
+
+
+// ========= Express Middleware =========
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
