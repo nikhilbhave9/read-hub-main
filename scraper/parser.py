@@ -63,7 +63,7 @@ def handle_xml_link(newsletter: RSSURL):
     
     mongo_client = MongoUtils(location=MONGO_LOCATION)
     
-    article_collection = mongo_client.fetch_collection("articles", newsletter.name)
+    article_collection = mongo_client.fetch_collection("content", "content")
     
     mongo_client.insert_items_to_collection(article_collection, article_objects)
 

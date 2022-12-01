@@ -16,7 +16,7 @@ class MongoUtils:
         # this is the only way to make inter-container mongo communication work apparently
         # instead of '@localhost:27017' use the name of the container instance, which should be this only
         if location=="local":
-            client = MongoClient(f"mongodb://{username}:{password}@read-hub-mongo-1/") 
+            client = MongoClient(f"mongodb://{username}:{password}@mongo/") 
         elif location=="remote":
             client = MongoClient('mongodb+srv://admin:root@cluster0.s8asufw.mongodb.net/?retryWrites=true&w=majority')
         return client

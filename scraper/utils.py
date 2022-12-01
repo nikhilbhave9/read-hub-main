@@ -9,6 +9,10 @@ class Article(BaseModel):
     author: Union[str, None] = None
     description: Union[str, None] = None
     
+class HTMLAttributes(BaseModel):
+    title_tag: str
+    title_class: str
+    
 class RSSURL(BaseModel):
     url: str
     rss: str
@@ -20,5 +24,9 @@ class URL(RSSURL):
     author_class: str
     date_class: str
     description_class: str
+    
+class REDIS_DATA(BaseModel):
+    key: str
+    value: Union[str, None] = None
 
-MONGO_LOCATION = "remote"
+MONGO_LOCATION = "local"
