@@ -9,5 +9,6 @@ const websiteSchema = new Schema({
     articlesArray : { type : Array , "default" : [] }
 });
 
-const Website = mongoose.model('Website', websiteSchema);
+const myDb = mongoose.connection.useDb('content');
+const Website = myDb.model('Website', websiteSchema);
 module.exports = Website;

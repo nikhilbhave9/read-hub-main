@@ -28,10 +28,6 @@ const articleSchema = new Schema({
     }
 });
 
-// const myDb = mongoose.connection.useDb('articles');
-
-// const Article = mongoose.model('Article', articleSchema);
-// module.exports = Article;
-
-const Article = mongoose.model('Article', articleSchema);
+const myDb = mongoose.connection.useDb('content');
+const Article = myDb.model('Article', articleSchema);
 module.exports = Article;

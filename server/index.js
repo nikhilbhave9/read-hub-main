@@ -14,9 +14,10 @@ const Website = require('./models/websites');
 
 
 dotenv.config()
+const port = process.env.PORT || 8000;
 
+// ============= MongoDB Connection =============
 
-// MongoDB Connection 
 const mongo_username = process.env.MONGO_USERNAME;
 const mongo_password = process.env.MONGO_PASSWORD;
 
@@ -24,15 +25,13 @@ const url = `mongodb://${mongo_username}:${mongo_password}@mongo/`;
 
 mongoose.connect(url, {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
-    dbName: 'content'})
+    useUnifiedTopology: true})
     .then(() => {
         console.log('Connected to database ')
     })
     .catch((err) => {
         console.error(`Error connecting to the database. \n${err}`);
     });
-
 
 
 const app = express();
@@ -64,15 +63,15 @@ let redisClient;
     });
 })();
 
-// ===================================================
-
 
 // ========= Express Middleware =========
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 
-const port = process.env.PORT || 8000;
+
+
+// ============== Express Routes ==============
 
 app.get("/", function (req, res) {
     res.send("Hello, world!");
@@ -87,7 +86,6 @@ app.post("/api2", function (req, res) {
     const rss_url = new rssUrl(req.body);
     console.log(rss_url.name)
 })
-
 
 app.get("/api3", function (req, res) {
     Article.find()
@@ -146,6 +144,11 @@ app.get("/redisGet", async (req, res) => {
 
 //     
 // })
+
+
+
+
+// ==================================================================
 
 app.listen(port, () => {
     console.log("Server is running at port " + port);
