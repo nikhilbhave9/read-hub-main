@@ -1,12 +1,8 @@
 // Imports
-import { Routes, Route, Link, Navigate } from "react-router-dom";
-import { useEffect } from 'react';
+import { Routes, Route } from "react-router-dom";
 
 // Components
 import Authentication from './Components/Authentication';
-import Navbar from './Components/Navbar'
-import Login from './Components/Authentication/Login';
-import Logout from './Components/Authentication/Logout';
 import Signup from './Components/Authentication/Signup';
 import Dashboard from './Components/Dashboard';
 import FeedSettings from './Components/FeedSettings';
@@ -14,7 +10,7 @@ import Footer from './Components/Footer';
 import Highlights from './Components/Highlights';
 
 // Redux
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { login, selectUser } from './userSlice';
 
 // Google O-Auth
