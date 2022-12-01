@@ -77,6 +77,59 @@ app.get("/", function (req, res) {
     res.send("Hello, world!");
 });
 
+
+// User Routes
+
+// Check if user exists in database otherwise add them
+app.post('/api/users', async (req, res) => {
+    const userObject = req.body;
+    User.findOne({ userToken: userObject }, (err, user) => {
+        if (err) {
+            console.log(err);
+            res.status(500).send(err);
+        } else if (user) {
+            console.log('User already exists');
+            res.status(200).send(user);
+        } else {
+            const newUser = new User(userObject);
+            newUser.save((err, user) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send
+                } else {
+                    console.log('User added to database');
+                    res.status(200).send(user);
+                }
+            });
+        }
+    });
+});
+
+
+// app.post('/api/users', async (req, res) => {
+//     const userObject = req.body;
+//     User.create(userObject)
+//         .then((user) => {
+//             res.status(200).json(user);
+//         })
+//         .catch((err) => {
+//             res.status(400).json(err);
+//         });
+// });
+
+
+
+// app.get('/api/users', (req, res) => {
+//     User.find({}, (err, users) => {
+//         if (err) {
+//             res.status(500).send(err);
+//         } else {
+//             res.status(200).send(users);
+//         }
+//     });
+// });
+
+
 app.get("/api1", function (req, res) {
     res.json({ message: "Article 1" });
 });

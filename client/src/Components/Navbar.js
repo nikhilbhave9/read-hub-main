@@ -1,12 +1,14 @@
 import * as React from 'react';
 import { Link } from "react-router-dom";
-import { useState, useEffect } from 'react';
+
+// Redux
+import { useSelector } from 'react-redux';
+import { selectUser } from '../userSlice';
 
 // Components
 import Logout from './Authentication/Logout';
 
 // Styling 
-import PropTypes from 'prop-types';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -22,15 +24,9 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { createTheme } from '@mui/material/styles';
-import { spacing } from '@mui/system';
-
-// Google O-Auth
-import { gapi } from 'gapi-script';
 import { ThemeProvider } from '@emotion/react';
-const clientID = "743792005372-l001hnasupsvimqur3hq32pe8ngje3rr.apps.googleusercontent.com"
 
 
 // Themes
@@ -46,19 +42,23 @@ const theme = createTheme({
   },
 });
 
-// Json data about profile (replace with DB code)
-const profileData = {
-  name: 'John',
-  email: 'johndoe@gmail.com',
-  dp: 'https://media.istockphoto.com/id/1210939712/vector/user-icon-people-icon-isolated-on-white-background-vector-illustration.jpg?s=612x612&w=0&k=20&c=vKDH9j7PPMN-AiUX8vsKlmOonwx7wjqdKiLge7PX1ZQ=',
-  subscription: 'Premium'
-};
 
 const drawerWidth = 160;
 
 function Navbar(props) {
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
+
+  // Get data about the current profile logged in from redux store 
+  const user = useSelector(selectUser); // Use the userReducer called "user"
+
+  // Make a separate call to the database to get subscription plan
+
+  const profileData = {
+    name: user.given_name,
+    dp: user.picture,
+    subscription: 'Premium'
+  };
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);

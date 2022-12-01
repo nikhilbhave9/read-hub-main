@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import jwt_decode from "jwt-decode";
 
+
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
 import { login, selectUser } from '../../userSlice';
@@ -30,7 +31,7 @@ function Login() {
 
 
     // Redux to manage user state
-    const user = useSelector(state => state.user); // Use the userReducer called "user"
+    // const user = useSelector(state => state.user); // Use the userReducer called "user"
     const dispatch = useDispatch(); // Use the dispatch function to update the userReducer
 
 
@@ -49,6 +50,28 @@ function Login() {
 
         // Use Redux to set state of user AND set status to authenticated 
         dispatch(login(userObject)); // Here, login is the action and userObject is the action.payload 
+
+        // Prepare the userRequest to be sent to the server
+        // const userRequest = {
+        //     userToken: response.credential,
+        //     firstName: userObject.firstName,
+        //     lastName: userObject.lastName,
+        //     email: userObject.email,
+        //     dp: userObject.picture
+        // }
+
+
+        // // Add user to database if not already there
+        // axios.post('/api/users', userRequest)
+        //     .then((res) => {
+        //         console.log(res);
+        //     })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     });
+
+
+
         navigate('/dashboard');
     }
 

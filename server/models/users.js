@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+    userToken : {
+        type: String,
+        required: true
+    },
     firstName: {
         type: String,
         required: true
@@ -11,11 +15,12 @@ const userSchema = new Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
     },
     subscriptionTier : {
-        type: String,
-        required: true
+        type: Number,
+        required: true,
+        default: 1
     },
     dp: {
         type: String,
