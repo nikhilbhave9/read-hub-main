@@ -77,6 +77,16 @@ app.get("/", function (req, res) {
     res.send("Hello, world!");
 });
 
+app.get("/api/highlights", function (req, res) {
+    res.json({message: "Testing GET ROUTE"});
+});
+
+app.post("/api/gethighlights", function (req, res) {
+    console.log("POST request received");
+    console.log(req.body);
+    res.json({message: "Testing POST ROUTE"});
+});
+
 
 // User Routes
 
