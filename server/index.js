@@ -70,7 +70,11 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 
 
-// ============== Express Routes ==============
+// ================== Express Routes ==================
+// ====================================================
+
+
+
 
 app.get("/", function (req, res) {
     res.send("Hello, world!");
@@ -87,7 +91,7 @@ app.post("/api/gethighlights", function (req, res) {
 });
 
 
-// User Routes
+// User Routes =========
 
 // Check if user exists in database otherwise add them
 app.post('/api/users', async (req, res) => {
@@ -114,6 +118,29 @@ app.post('/api/users', async (req, res) => {
     });
 });
 
+// Subscription Routes =========
+
+// Get the subscription of a user
+app.get('/api/subscription', async (req, res) => {
+    const userObject = req.body;
+    console.log(userObject);
+})
+
+
+// Website Routes =========
+
+// Get current websites of a user 
+app.get('/api/websites', async (req, res) => {
+    console.log("REACHED")
+    const userObject = req.body;
+    console.log(userObject);
+});
+
+// Add a website to a user
+app.post('/api/websites', async (req, res) => {
+    const userObject = req.body;
+    console.log(userObject);
+});
 
 // app.post('/api/users', async (req, res) => {
 //     const userObject = req.body;

@@ -41,6 +41,10 @@ function FeedSettings() {
     // Get user from redux global store
     const user = "test";
 
+
+    // Add new website 
+    const [newWebsite, setNewWebsite] = useState("");
+
     // Table management
     const [websites, setWebsites] = useState([{ "name": "testName", "url": "testURL" }]);
     // Each website will contain: Name, URL
@@ -51,7 +55,7 @@ function FeedSettings() {
         data: {
             userid: user
         }
-    })
+        })
         .then((res) => {
             console.log(res);
             setWebsites(res.data); // SHOULD RETURN AN ARRAY OF WEBSITE OBJECTS
@@ -61,6 +65,30 @@ function FeedSettings() {
         });
 
 
+    // End of Table
+
+    // Handle new website input
+    function handleAdd(e) {
+        e.preventDefault();
+        console.log(newWebsite);
+        axios({
+            method: 'post',
+            url: '/api/websites',
+            data: {
+                userid: user,
+                url: newWebsite
+            }
+        })
+            .then((res) => {
+                console.log(res);
+                setWebsites(res.data); // SHOULD RETURN AN ARRAY OF WEBSITE OBJECTS
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
+    // Handle delete website
     function handleDelete(e) {
         console.log(e.target.value);
         axios({
@@ -109,6 +137,7 @@ function FeedSettings() {
                     }}
                     noValidate
                     autoComplete="off"
+                    onSubmit={handleAdd}
                 >
 
                     <TextField
@@ -116,11 +145,11 @@ function FeedSettings() {
                         fullWidth="true"
                         id="outlined-required"
                         label="URL"
-
+                        onInput={ (e) => setNewWebsite(e.target.value) }
                     />
 
 
-                    <Button variant="contained" size="small" sx={{ mt: 0, mb: 3 }}>
+                    <Button type="submit" variant="contained" size="small" sx={{ mt: 0, mb: 3 }}>
                         Add New
                     </Button>
 
