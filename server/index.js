@@ -70,7 +70,6 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(bodyParser.json());
 
 
-
 // ============== Express Routes ==============
 
 app.get("/", function (req, res) {
