@@ -10,14 +10,15 @@ import Navbar from './Navbar';
 import { Container } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
-import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
+import TextField from '@mui/material/TextField';
 
 const columns = [
     { id: 'name', label: 'Name', minWidth: 100 },
@@ -41,7 +42,7 @@ function FeedSettings() {
     const user = "test";
 
     // Table management
-    const [websites, setWebsites] = useState([{"name": "testName", "url": "testURL"}]);
+    const [websites, setWebsites] = useState([{ "name": "testName", "url": "testURL" }]);
     // Each website will contain: Name, URL
 
     axios({
@@ -50,7 +51,7 @@ function FeedSettings() {
         data: {
             userid: user
         }
-        })
+    })
         .then((res) => {
             console.log(res);
             setWebsites(res.data); // SHOULD RETURN AN ARRAY OF WEBSITE OBJECTS
@@ -59,8 +60,8 @@ function FeedSettings() {
             console.log(err);
         });
 
-    
-    function handleDelete (e) {
+
+    function handleDelete(e) {
         console.log(e.target.value);
         axios({
             method: 'delete',
@@ -69,7 +70,7 @@ function FeedSettings() {
                 userid: user,
                 url: e.target.value
             }
-            })
+        })
             .then((res) => {
                 console.log(res);
             })
@@ -87,13 +88,48 @@ function FeedSettings() {
         <>
             <Navbar />
             <Container component="main" sx={{ mt: 1, mb: 10 }} maxWidth="lg" align="center">
-                <Typography variant="h2">
-                    Settings
-                </Typography>
+                <Box sx={{ mb: 3 }}>
+                    <Typography variant="h2">
+                        Settings
+                    </Typography>
+                </Box>
 
-                <Typography variant="h4">
+
+                <Typography variant='h4'>
                     Add New
                 </Typography>
+
+
+
+
+                <Box
+                    component="form"
+                    sx={{
+                        '& .MuiTextField-root': { mt: 3, mb: 3},
+                    }}
+                    noValidate
+                    autoComplete="off"
+                >
+
+                    <TextField
+                        required
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="URL"
+
+                    />
+
+
+                    <Button variant="contained" size="small" sx={{ mt: 0, mb: 3 }}>
+                        Add New
+                    </Button>
+
+
+
+                </Box>
+
+
+
 
                 <Typography variant="h4">
                     Manage Newsletters
@@ -126,6 +162,7 @@ function FeedSettings() {
                         </TableBody>
                     </Table>
                 </TableContainer>
+
 
 
 
