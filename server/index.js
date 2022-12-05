@@ -121,9 +121,18 @@ app.post('/api/users', async (req, res) => {
 // Subscription Routes =========
 
 // Get the subscription of a user
-app.get('/api/subscription', async (req, res) => {
-    const userObject = req.body;
-    console.log(userObject);
+app.get('/api/subscriptions', async (req, res) => {
+    const userObject = req.query;
+    console.log(userObject.userid);
+    // Send back an array of subscription
+    res.json({
+        subscriptions: ["Free", "Premium", "Pro"]
+    });
+
+    // Make a fetch request to the database and get all subscriptions 
+
+
+
 })
 
 
@@ -138,9 +147,15 @@ app.get('/api/websites', async (req, res) => {
 
 // Add a website to a user
 app.post('/api/websites', async (req, res) => {
+    console.log("POST REACHED")
     const userObject = req.body;
     console.log(userObject);
 });
+
+
+// Article Routes =========
+
+
 
 // app.post('/api/users', async (req, res) => {
 //     const userObject = req.body;

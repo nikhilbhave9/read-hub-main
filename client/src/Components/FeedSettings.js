@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -8,6 +8,8 @@ import Navbar from './Navbar';
 
 // Styling
 import { Container } from '@mui/material';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
@@ -19,6 +21,10 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 const columns = [
     { id: 'name', label: 'Name', minWidth: 100 },
@@ -45,27 +51,63 @@ function FeedSettings() {
     // Add new website 
     const [newWebsite, setNewWebsite] = useState("");
 
+    // Select subscription
+    const [currentSubscription, setCurrentSubscription] = useState("Free");
+
+
+    // Get current subscription from redux state OR user database
+    // setCurrentSubscription("test");
+
+    // Get all possible subscriptions from database
+    const [subscriptions, setSubscriptions] = useState([]);
+
+    useEffect(() => {
+        if (subscriptions.length < 3) {
+            axios({
+                method: 'get',
+                url: '/api/subscriptions',
+                // params: {
+                //     userid: user
+                // }
+            })
+                .then((response) => {
+                    console.log(response.data);
+                    console.log(response.data.subscriptions);
+                    response.data.subscriptions.forEach((subscription) => {
+                        setSubscriptions(subscriptions => [...subscriptions, subscription]);
+                    });
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        }
+    }, []);
+
+
+
     // Table management
     const [websites, setWebsites] = useState([{ "name": "testName", "url": "testURL" }]);
     // Each website will contain: Name, URL
 
-    axios({
-        method: 'get',
-        url: '/api/websites',
-        data: {
-            userid: user
-        }
-        })
-        .then((res) => {
-            console.log(res);
-            setWebsites(res.data); // SHOULD RETURN AN ARRAY OF WEBSITE OBJECTS
-        })
-        .catch((err) => {
-            console.log(err);
-        });
+    // axios({
+    //     method: 'get',
+    //     url: '/api/websites',
+    //     data: {
+    //         userid: user
+    //     }
+    // })
+    //     .then((res) => {
+    //         console.log(res);
+    //         setWebsites(res.data); // SHOULD RETURN AN ARRAY OF WEBSITE OBJECTS
+    //     })
+    //     .catch((err) => {
+    //         console.log(err);
+    //     });
 
 
     // End of Table
+    console.log("Subs: ")
+    console.log(subscriptions);
 
     // Handle new website input
     function handleAdd(e) {
@@ -115,7 +157,7 @@ function FeedSettings() {
     return (
         <>
             <Navbar />
-            <Container component="main" sx={{ mt: 1, mb: 10 }} maxWidth="lg" align="center">
+            <Container component="main" sx={{ mt: 1, mb: 10 }} maxWidth="md" align="center">
                 <Box sx={{ mb: 3 }}>
                     <Typography variant="h2">
                         Settings
@@ -133,7 +175,7 @@ function FeedSettings() {
                 <Box
                     component="form"
                     sx={{
-                        '& .MuiTextField-root': { mt: 3, mb: 3},
+                        '& .MuiTextField-root': { mt: 3, mb: 3 },
                     }}
                     noValidate
                     autoComplete="off"
@@ -145,12 +187,12 @@ function FeedSettings() {
                         fullWidth="true"
                         id="outlined-required"
                         label="URL"
-                        onInput={ (e) => setNewWebsite(e.target.value) }
+                        onInput={(e) => setNewWebsite(e.target.value)}
                     />
 
 
                     <Button type="submit" variant="contained" size="small" sx={{ mt: 0, mb: 3 }}>
-                        Add New
+                        Add
                     </Button>
 
 
@@ -194,10 +236,42 @@ function FeedSettings() {
 
 
 
+                <Box sx={{ mt: 3, mb: 3, p: 2 }}>
+                    <Typography variant="h4">
+                        Subscriptions
+                    </Typography>
+                    <Card sx={{ m: 2 }}>
+                        <CardContent>
+                            <Typography variant="h6" color="text.secondary">
+                                Current Subscription: {currentSubscription}
+                            </Typography>
+                        </CardContent>
+                    </Card>
+                    
+                    <Box sx={{ mt: 2 }}>               
+                    <Typography variant="h5">
+                        Select New Tier
+                    </Typography>
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">Subscription Tier</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={currentSubscription}
+                            label="Tier"
+                            onChange={(e) => setCurrentSubscription(e.target.value)}
+                        >
+                            {subscriptions.map((subscription) => (
+                                <MenuItem value={subscription}>{subscription}</MenuItem>
+                            ))}
 
-                <Typography variant="h4">
-                    Subscriptions
-                </Typography>
+                        </Select>
+                    </FormControl>
+                    </Box>
+                </Box>
+
+
+
                 <Typography variant="h4">
                     User Profile
                 </Typography>
