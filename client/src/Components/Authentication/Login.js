@@ -174,7 +174,7 @@ function Login() {
                             <LockOutlinedIcon />
                         </Avatar>
                         <Typography component="h1" variant="h5">
-                            Sign in
+                            Continue with Google
                         </Typography>
 
                         <Box id="signInButton" sx={{ m: 4 }}>
