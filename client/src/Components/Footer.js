@@ -14,7 +14,7 @@ function Footer() {
                 sx={{
                     position: 'fixed',
                     width: '100%',
-                    py: 3,
+                    py: 1.5,
                     px: 2,
                     mt: 'auto',
                     bottom: 0,
@@ -26,7 +26,7 @@ function Footer() {
             >
                 <Container align="center">
                     <Typography variant="body1">
-                        Created by <Link href="https://github.com/nikhilbhave9" underline="none" target="_blank">{'Nikhil'}</Link> and <Link href="https://github.com/sohambagchi" underline="none" target="_blank">{'Soham'}</Link>
+                        <i>Created by <Link href="https://github.com/nikhilbhave9" underline="none" target="_blank">{'Nikhil'}</Link> and <Link href="https://github.com/sohambagchi" underline="none" target="_blank">{'Soham'}</Link></i>
                     </Typography>
                 </Container>
             </Box>

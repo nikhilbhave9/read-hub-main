@@ -271,10 +271,6 @@ function FeedSettings() {
                 </Box>
 
 
-
-                <Typography variant="h4">
-                    User Profile
-                </Typography>
                 <Button variant="contained" type="submit" onClick={handleSubmit}>
                     Back
                 </Button>
