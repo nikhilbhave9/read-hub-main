@@ -31,7 +31,6 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-
 // Google O-Auth
 import Signup from './Signup';
 const clientID = "743792005372-l001hnasupsvimqur3hq32pe8ngje3rr.apps.googleusercontent.com"
@@ -49,17 +48,11 @@ function Copyright(props) {
     );
 }
 
-const theme = createTheme();
-
-// const handleSubmit = (event) => {
-//     event.preventDefault();
-//     const data = new FormData(event.currentTarget);
-//     console.log({
-//         email: data.get('email'),
-//         password: data.get('password'),
-//     });
-// };
-
+const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+    },
+  });
 
 function Login() {
 
@@ -143,7 +136,7 @@ function Login() {
 
 
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={darkTheme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
                 <CssBaseline />
                 <Grid

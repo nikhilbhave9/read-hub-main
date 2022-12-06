@@ -13,30 +13,42 @@ import Highlights from './Components/Highlights';
 import { useSelector } from 'react-redux';
 import { login, selectUser } from './userSlice';
 
+// Material UI
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
 // Google O-Auth
 import { gapi } from 'gapi-script';
 const clientID = "743792005372-l001hnasupsvimqur3hq32pe8ngje3rr.apps.googleusercontent.com"
 
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+  },
+});
+
 function App() {
 
   const user = useSelector(state => state.user); // Use the userReducer called "user"
-  const currentUser = useSelector(state => state.user); 
+  const currentUser = useSelector(state => state.user);
   return (
     <>
-      <div>
+      <ThemeProvider theme={darkTheme}>
+        <CssBaseline />
+        <div>
 
-        <Routes>
-          <Route path="/" element={<Authentication />} />
-          {/* <Route path="/" element={<Login />} /> */}
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/settings" element={<FeedSettings />} />
-          <Route path="/highlights" element={<Highlights />} />
-        </Routes>
-        <Footer />
-      </div>
+          <Routes>
+            <Route path="/" element={<Authentication />} />
+            {/* <Route path="/" element={<Login />} /> */}
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/settings" element={<FeedSettings />} />
+            <Route path="/highlights" element={<Highlights />} />
+          </Routes>
+          <Footer />
+        </div>
+      </ThemeProvider>
 
-      
     </>
   );
 }
