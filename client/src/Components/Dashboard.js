@@ -1,17 +1,44 @@
+// Imports
 import { useState, useEffect } from 'react';
 
+// Components
 import Navbar from './Navbar';
+
+// Redux
+import { useSelector, useDispatch } from 'react-redux';
+import { login, selectUser } from '../userSlice';
 
 // Styling
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
+import axios from 'axios';
 
 
 function Dashboard() {
 
+    const user = useSelector(state => state.user); // Use the userReducer called "user"
+
     // Set State
-    // const [backendData, setBackendData] = useState();
+    const [backendData, setBackendData] = useState();
+
+    // Fetch data from backend for current user
+    useEffect(() => {
+        axios({
+            method: 'get',
+            url: '/api1',
+            data: {
+                user: user
+            }
+        })
+            .then(res => {
+                console.log(res.data);
+                setBackendData(res.data);
+            })
+            .catch(err => console.log(err));
+    }, []);
+
+
 
     // useEffect(() => {
     //     fetch("/api1")
