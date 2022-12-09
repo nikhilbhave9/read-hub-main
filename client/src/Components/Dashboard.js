@@ -3,6 +3,8 @@ import { useState, useEffect } from 'react';
 
 // Components
 import Navbar from './Navbar';
+import ArticlePreview from './ArticlePreview';
+import Article from './Article';
 
 // Redux
 import { useSelector, useDispatch } from 'react-redux';
@@ -20,16 +22,16 @@ function Dashboard() {
     const user = useSelector(state => state.user); // Use the userReducer called "user"
 
     // Set State
-    const [backendData, setBackendData] = useState();
+    const [backendData, setBackendData] = useState([]);
 
     // Fetch data from backend for current user
     useEffect(() => {
         axios({
             method: 'get',
-            url: '/api1',
-            data: {
-                user: user
-            }
+            url: '/api1'
+            // data: {
+            //     user: user
+            // }
         })
             .then(res => {
                 console.log(res.data);
@@ -81,6 +83,22 @@ function Dashboard() {
                     </Grid>
                 </Grid>
 
+
+                <Grid container columnSpacing={2}>
+                    backendData.map(article => {
+                        return (
+                        <Grid item xs={12} sm={12}>
+                            <Paper>
+                                <h3>{article.title}</h3>
+                                <p>{article.body}</p>
+                            </Paper>
+                        </Grid>
+
+                    )});                     
+
+
+
+                </Grid>
 
 
 

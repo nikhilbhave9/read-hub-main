@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 
 
-function ArticlePreview () {
+function ArticlePreview(props) {
 
     const navigate = useNavigate();
 
@@ -18,18 +18,15 @@ function ArticlePreview () {
         <div>
             <Typography variant="h3">
                 Title
+                {props.title}
             </Typography>
-            <Typography variant="h6">
-                Author
-            </Typography>
+
             <Typography variant="h6">
                 Date
-            </Typography>
-            <Typography variant="body1">
-                Content
+                {props.date}
             </Typography>
             <button onClick={handleClick}>Read More</button>
-            
+
         </div>
     )
 }
