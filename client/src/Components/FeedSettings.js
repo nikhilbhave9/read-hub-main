@@ -49,7 +49,8 @@ function FeedSettings() {
 
 
     // Add new website 
-    const [newWebsite, setNewWebsite] = useState("");
+    const [newWebsite, setNewWebsite] = useState({});
+    const [newScraper, setNewScraper] = useState({});
 
     // Select subscription
     const [currentSubscription, setCurrentSubscription] = useState("Free");
@@ -111,19 +112,74 @@ function FeedSettings() {
 
     // Handle new website input
     function handleAdd(e) {
+        setNewWebsite({ ...newWebsite, [e.target.name]: e.target.value });
         e.preventDefault();
+        console.log(newWebsite);
+    }
+
+    function sendAdd() {
+        console.log("Sending add request");
         console.log(newWebsite);
         axios({
             method: 'post',
-            url: '/api/websites',
+            url: '/api/websites/rss',
             data: {
-                userid: user,
-                url: newWebsite
+                // userid: user,
+                name: newWebsite.Name,
+                websiteUrl: newWebsite.URL,
+                rssUrl: newWebsite.RSS
             }
         })
             .then((res) => {
                 console.log(res);
-                setWebsites(res.data); // SHOULD RETURN AN ARRAY OF WEBSITE OBJECTS
+                // setWebsites(res.data); // SHOULD RETURN AN ARRAY OF WEBSITE OBJECTS
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
+    }
+
+    function handleScraperAdd(e) {
+        setNewScraper({ ...newScraper, [e.target.name]: e.target.value });
+        e.preventDefault();
+        console.log(newWebsite);
+    }
+
+    function sendScraperAdd() {
+        console.log("Sending: ")
+        console.log();
+        axios({
+            method: 'post',
+            url: '/api/websites/rss',
+            data: {
+                // userid: user,
+                name: newScraper.Name,
+                websiteUrl: newScraper.URL,
+                rssUrl: newScraper.RSS,
+                archiveurl: newScraper.Archive,
+                description: newScraper.Description,
+                html_attributes:
+                {
+                    article_class: newScraper.ArticleClass,
+                    title_class: newScraper.TitleClass,
+                    title_tag: newScraper.TitleTag,
+                    date_class: newScraper,
+                    link_class: newScraper.LinkClass,
+                    link_tag: newScraper.LinkTag,
+                    pubdate_class: newScraper.PubDateClass,
+                    pubdate_tag: newScraper.PubDateTag,
+                    description_class: newScraper.DescriptionClass,
+                    description_tag: newScraper.DescriptionTag,
+                    author_class: newScraper.AuthorClass,
+                    author_tag: newScraper.AuthorTag
+                }
+
+            }
+        })
+            .then((res) => {
+                console.log(res);
+                // setWebsites(res.data); // SHOULD RETURN AN ARRAY OF WEBSITE OBJECTS
             })
             .catch((err) => {
                 console.log(err);
@@ -179,17 +235,33 @@ function FeedSettings() {
                     }}
                     noValidate
                     autoComplete="off"
-                    onSubmit={handleAdd}
+                    onSubmit={sendAdd}
                 >
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Name"
+                        name="Name"
+                        onInput={handleAdd}
+                    />
 
                     <TextField
                         required
                         fullWidth="true"
                         id="outlined-required"
                         label="URL"
-                        onInput={(e) => setNewWebsite(e.target.value)}
+                        name="URL"
+                        onInput={handleAdd}
                     />
 
+                    <TextField
+                        required
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="RSS"
+                        name="RSS"
+                        onInput={handleAdd}
+                    />
 
                     <Button type="submit" variant="contained" size="small" sx={{ mt: 0, mb: 3 }}>
                         Add
@@ -247,26 +319,26 @@ function FeedSettings() {
                             </Typography>
                         </CardContent>
                     </Card>
-                    
-                    <Box sx={{ mt: 2 }}>               
-                    <Typography variant="h5">
-                        Select New Tier
-                    </Typography>
-                    <FormControl fullWidth>
-                        <InputLabel id="demo-simple-select-label">Subscription Tier</InputLabel>
-                        <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            value={currentSubscription}
-                            label="Tier"
-                            onChange={(e) => setCurrentSubscription(e.target.value)}
-                        >
-                            {subscriptions.map((subscription) => (
-                                <MenuItem value={subscription}>{subscription}</MenuItem>
-                            ))}
 
-                        </Select>
-                    </FormControl>
+                    <Box sx={{ mt: 2 }}>
+                        <Typography variant="h5">
+                            Select New Tier
+                        </Typography>
+                        <FormControl fullWidth>
+                            <InputLabel id="demo-simple-select-label">Subscription Tier</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                value={currentSubscription}
+                                label="Tier"
+                                onChange={(e) => setCurrentSubscription(e.target.value)}
+                            >
+                                {subscriptions.map((subscription) => (
+                                    <MenuItem value={subscription}>{subscription}</MenuItem>
+                                ))}
+
+                            </Select>
+                        </FormControl>
                     </Box>
                 </Box>
 

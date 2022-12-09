@@ -6,15 +6,43 @@ const cors = require('cors');
 const Redis = require('redis');
 const dotenv = require('dotenv');
 
+// import axios
+const axios = require('axios');
+
 // Mongoose Models
 const Article = require('./models/articles');
 const User = require('./models/users');
 const Subscription = require('./models/subscriptions');
 const Website = require('./models/websites');
+const { request } = require('express');
 
 
 dotenv.config()
 const port = process.env.PORT || 8000;
+
+// ============= Scraper Connection =============
+
+const http_rss_options = {
+    hostname: 'scraper',
+    port: 7000,
+    path: '/new_rss_url',
+    method: 'POST',
+}
+
+const http_url_options = {
+    hostname: 'scraper',
+    port: 7000,
+    path: '/new_url',
+    method: 'POST',
+}
+
+// setup axios instance
+const scraper = axios.create({
+    baseURL: 'http://scraper:7000',
+    timeout: 1000,
+    headers: {'Content-Type': 'application/json'}
+});
+
 
 // ============= MongoDB Connection =============
 
@@ -140,17 +168,58 @@ app.get('/api/subscriptions', async (req, res) => {
 
 // Get current websites of a user 
 app.get('/api/websites', async (req, res) => {
+    const userID = req.query.userid;
     console.log("REACHED")
     const userObject = req.body;
     console.log(userObject);
+    res.json([
+        {
+            title: "Test Website",
+            author: "Test Author",
+            date: "Test Date",
+            body: "Test Body"
+        },
+        {
+            title: "Test Website2",
+            author: "Test Author2",
+            date: "Test Date2",
+            body: "Test Body2"
+        }
+    ]
+    );
 });
 
 // Add a website to a user
-app.post('/api/websites', async (req, res) => {
+app.post('/api/websites/rss', async (req, res) => {
     console.log("POST REACHED")
     const userObject = req.body;
     console.log(userObject);
+    
+    const postObject = {
+        url: userObject.websiteUrl,
+        rss: userObject.rssUrl,
+        name: userObject.name
+        // description: userObject.description || null,
+    }
+
+    // use axios to make a post request to the scraper
+    scraper.post('/new_rss_url', postObject)
+        .then((response) => {
+            console.log(response.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+
+
+
+    res.json({message: "Returning POST ROUTE"});
+    // Make POST request to python server
+    // app.post('scraper/new_rss_url', userObject, (req, res) => {
+    //     console.log(res);
+    // })
 });
+
 
 
 // Article Routes =========
