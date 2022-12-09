@@ -31,9 +31,9 @@ function ArticlePreview( {article, user} ) {
             </Typography>
 
 
-            <Typography variant="body1">
-                {article.content}
-            </Typography>
+            {/* <Typography variant="body1">
+                {article.body}
+            </Typography> */}
             {/* <button onClick={handleClick}>Read More</button> */}
 
         </div>
