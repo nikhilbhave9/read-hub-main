@@ -40,7 +40,7 @@ const http_url_options = {
 const scraper = axios.create({
     baseURL: 'http://scraper:7000',
     timeout: 1000,
-    headers: {'Content-Type': 'application/json'}
+    headers: { 'Content-Type': 'application/json' }
 });
 
 
@@ -52,8 +52,9 @@ const mongo_password = process.env.MONGO_PASSWORD;
 const url = `mongodb://${mongo_username}:${mongo_password}@mongo/`;
 
 mongoose.connect(url, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true})
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
     .then(() => {
         console.log('Connected to database ')
     })
@@ -104,25 +105,25 @@ app.use(bodyParser.json());
 
 
 
-app.get("/", function (req, res) {
+app.get("/", function(req, res) {
     res.send("Hello, world!");
 });
 
-app.get("/api/highlights", function (req, res) {
-    res.json({message: "Testing GET ROUTE"});
+app.get("/api/highlights", function(req, res) {
+    res.json({ message: "Testing GET ROUTE" });
 });
 
-app.post("/api/gethighlights", function (req, res) {
+app.post("/api/gethighlights", function(req, res) {
     console.log("POST request received");
     console.log(req.body);
-    res.json({message: "Testing POST ROUTE"});
+    res.json({ message: "Testing POST ROUTE" });
 });
 
 
 // User Routes =========
 
 // Check if user exists in database otherwise add them
-app.post('/api/users', async (req, res) => {
+app.post('/api/users', async(req, res) => {
     const userObject = req.body;
     User.findOne({ userToken: userObject }, (err, user) => {
         if (err) {
@@ -149,7 +150,7 @@ app.post('/api/users', async (req, res) => {
 // Subscription Routes =========
 
 // Get the subscription of a user
-app.get('/api/subscriptions', async (req, res) => {
+app.get('/api/subscriptions', async(req, res) => {
     const userObject = req.query;
     console.log(userObject.userid);
     // Send back an array of subscription
@@ -167,39 +168,34 @@ app.get('/api/subscriptions', async (req, res) => {
 // Website Routes =========
 
 // Get current websites of a user 
-app.get('/api/websites', async (req, res) => {
+app.get('/api/userWebsites', async(req, res) => {
     const userID = req.query.userid;
     console.log("REACHED")
     const userObject = req.body;
     console.log(userObject);
-    res.json([
-        {
-            title: "Test Website",
-            author: "Test Author",
-            date: "Test Date",
-            body: "Test Body"
-        },
-        {
-            title: "Test Website2",
-            author: "Test Author2",
-            date: "Test Date2",
-            body: "Test Body2"
-        }
-    ]
-    );
+
+    Article.find({})
+        .then((articles) => {
+            console.log(articles.length);
+            res.send(articles);
+        })
+        .catch((err) => {
+            console.log(err);
+            res.send({ status: 404 })
+        });
 });
 
 // Add a website to a user
-app.post('/api/websites/rss', async (req, res) => {
+app.post('/api/websites/rss', async(req, res) => {
     console.log("POST REACHED")
     const userObject = req.body;
     console.log(userObject);
-    
+
     const postObject = {
         url: userObject.websiteUrl,
         rss: userObject.rssUrl,
         name: userObject.name
-        // description: userObject.description || null,
+            // description: userObject.description || null,
     }
 
     // use axios to make a post request to the scraper
@@ -213,7 +209,7 @@ app.post('/api/websites/rss', async (req, res) => {
 
 
 
-    res.json({message: "Returning POST ROUTE"});
+    res.json({ message: "Returning POST ROUTE" });
     // Make POST request to python server
     // app.post('scraper/new_rss_url', userObject, (req, res) => {
     //     console.log(res);
@@ -250,17 +246,17 @@ app.post('/api/websites/rss', async (req, res) => {
 // });
 
 
-app.get("/api1", function (req, res) {
+app.get("/api1", function(req, res) {
     res.json({ message: "Article 1" });
 });
 
-app.post("/api2", function (req, res) {
+app.post("/api2", function(req, res) {
     console.log(req.body);
     const rss_url = new rssUrl(req.body);
     console.log(rss_url.name)
 })
 
-app.get("/api3", function (req, res) {
+app.get("/api3", function(req, res) {
     Article.find()
         .then((result) => {
             res.json(result);
@@ -285,19 +281,25 @@ app.post("/mongoTest", async(req, res) => {
 })
 
 
-app.post("/redisSet", async (req, res) => {
+app.post("/redisSet", async(req, res) => {
     console.log(req.body);
     await redisClient.set(req.body.key, JSON.stringify(req.body.value));
     res.json({ message: "Redis Set" });
 })
 
-app.get("/redisGet", async (req, res) => {
+app.get("/redisGet", async(req, res) => {
     console.log(req.body);
     const cachedResults = await redisClient.get(req.body.key);
     res.json({ message: cachedResults });
 })
 
-
+// create get request
+app.get("/api", async(req, res) => {
+    // get all articles from mongodb
+    const articles = await Article.find();
+    // send articles as json response
+    res.json(articles);
+});
 
 // const dbo = require('./db/conn');
 

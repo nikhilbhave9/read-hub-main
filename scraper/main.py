@@ -4,6 +4,8 @@ from fastapi import FastAPI
 from mongo_utils import MongoUtils
 from parser import handle_xml_link
 from scraper import NewsletterScraper
+from apscheduler.schedulers.background import BackgroundScheduler
+
 from utils import *
 
 import redis
@@ -16,6 +18,10 @@ app = FastAPI()
 mongo_client = MongoUtils(location=MONGO_LOCATION)
 
 rd = redis.Redis(host='cache', port=6379, db=0, password='foobared')
+
+# scheduler = BackgroundScheduler()
+# scheduler.add_job(func=daily_parse_and_scrape, trigger="interval", days=1)
+# scheduler.start()
 
 @app.get("/")
 def read_root():
