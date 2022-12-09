@@ -1,31 +1,40 @@
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 
 // Styling 
 import Typography from '@mui/material/Typography';
 
 
-function ArticlePreview(props) {
+function ArticlePreview( {article, user} ) {
+
+    // DON'T USE USER RIGHT NOW 
+
 
     const navigate = useNavigate();
 
-    const handleClick = () => {
-        navigate('/article/:id')
-    }
+    // const handleClick = () => {
+    //     navigate('/article/:id')
+    // }
 
 
     return (
         <div>
             <Typography variant="h3">
                 Title
-                {props.title}
+                {article.title}
             </Typography>
 
             <Typography variant="h6">
                 Date
-                {props.date}
+                {article.date}
             </Typography>
-            <button onClick={handleClick}>Read More</button>
+
+
+            <Typography variant="body1">
+                {article.content}
+            </Typography>
+            {/* <button onClick={handleClick}>Read More</button> */}
 
         </div>
     )

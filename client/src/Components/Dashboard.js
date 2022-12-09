@@ -15,6 +15,7 @@ import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import axios from 'axios';
+import { Typography } from '@mui/material';
 
 
 function Dashboard() {
@@ -28,7 +29,7 @@ function Dashboard() {
     useEffect(() => {
         axios({
             method: 'get',
-            url: '/api1'
+            url: '/api/userWebsites'
             // data: {
             //     user: user
             // }
@@ -85,19 +86,9 @@ function Dashboard() {
 
 
                 <Grid container columnSpacing={2}>
-                    backendData.map(article => {
-                        return (
-                        <Grid item xs={12} sm={12}>
-                            <Paper>
-                                <h3>{article.title}</h3>
-                                <p>{article.body}</p>
-                            </Paper>
-                        </Grid>
-
-                    )});                     
-
-
-
+                    {backendData.map((article) => (
+                        <ArticlePreview article={article} user={user}/> 
+                    ))}
                 </Grid>
 
 
