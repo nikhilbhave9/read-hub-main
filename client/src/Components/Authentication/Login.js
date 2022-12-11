@@ -22,9 +22,6 @@ import Box from '@mui/material/Box';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
@@ -72,6 +69,7 @@ function Login() {
     // const [ user, setUser ] = useState({});
     const navigate = useNavigate();
 
+    const user = selectUser; // Use the userReducer called "user"
 
 
     function handleCallbackResponse(response) {
@@ -118,6 +116,8 @@ function Login() {
             { theme: 'outline', size: 'large', type: 'standard' }
         );
 
+        console.log("Google O-Auth loaded successfully!")
+
     }, []);
 
 
@@ -163,6 +163,9 @@ function Login() {
                             alignItems: 'center',
                         }}
                     >
+                        <Typography component="h1" variant="h4">
+                            ReadHub: Sign in
+                        </Typography>
                         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                             <LockOutlinedIcon />
                         </Avatar>
@@ -171,14 +174,6 @@ function Login() {
                         </Typography>
 
                         <Box id="signInButton" sx={{ m: 4 }}>
-                            {/* <GoogleLogin
-                                    clientId={clientID}
-                                    buttonText={"Login"}
-                                    onSuccess={onSuccess}
-                                    onFailure={onFailure}
-                                    cookiePolicy={'single_host_origin'}
-                                    isSignedIn={true}
-                                /> */}
                             <Grid container>
                                 <Grid item xs>
                                     <Link href="#" variant="body2">

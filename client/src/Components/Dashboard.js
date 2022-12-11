@@ -21,6 +21,9 @@ import { Typography } from '@mui/material';
 function Dashboard() {
 
     const user = useSelector(state => state.user); // Use the userReducer called "user"
+    // OR
+    // const user = useSelector(selectUser)
+    console.log(user)
 
     // Set State
     const [backendData, setBackendData] = useState([]);
@@ -57,6 +60,7 @@ function Dashboard() {
             <Navbar />
 
             <Container component="main" sx={{ mt: 1, mb: 10 }} maxWidth="lg" align="center">
+                <h1></h1>
                 <Box sx={{ mb: 3 }}>
                     <Typography variant="h2">
                         Feed
