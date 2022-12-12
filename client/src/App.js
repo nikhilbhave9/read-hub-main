@@ -1,13 +1,12 @@
 // Imports
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Link } from "react-router-dom";
 
 // Components
-import Authentication from './Components/Authentication';
-import Signup from './Components/Authentication/Signup';
 import Dashboard from './Components/Dashboard';
 import FeedSettings from './Components/FeedSettings';
 import Footer from './Components/Footer';
-import Highlights from './Components/Highlights';
+import PrivateRoutes from "./Components/PrivateRoutes";
+import Login from './Components/Authentication/Login';
 
 // Redux
 import { useSelector } from 'react-redux';
@@ -16,10 +15,27 @@ import { login, selectUser } from './userSlice';
 // Material UI
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import Container from '@mui/material/Container';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
-// Google O-Auth
-import { gapi } from 'gapi-script';
-const clientID = "743792005372-l001hnasupsvimqur3hq32pe8ngje3rr.apps.googleusercontent.com"
+const Home = () => {
+  return (
+    <Container component="main" maxWidth="md" align="center" sx={{ marginTop: 12 }}>
+      <Typography variant="h3" component="h3">
+        Presenting a new way of consuming 
+      </Typography>
+      <Typography variant="h2" component="h2">
+      the news
+      </Typography>
+
+      <Button variant="contained" sx={{ marginTop: 5 }}>
+        <Link to='/login'>Log in</Link>
+      </Button>
+      
+    </Container>
+  )
+}
 
 const darkTheme = createTheme({
   palette: {
@@ -38,12 +54,13 @@ function App() {
         <div>
 
           <Routes>
-            <Route path="/" element={<Authentication />} />
-            {/* <Route path="/" element={<Login />} /> */}
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/settings" element={<FeedSettings />} />
-            <Route path="/highlights" element={<Highlights />} />
+            <Route element={<PrivateRoutes />}>
+              <Route path="/" exact element={<Home />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/settings" element={<FeedSettings />} />
+            </Route>
+            <Route path="/login" element={<Login />} />
+
           </Routes>
           <Footer />
         </div>

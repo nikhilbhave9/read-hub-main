@@ -18,6 +18,7 @@ function Authentication() {
     var status = useSelector(selectStatus); // Use the userReducer called "status"
 
     if (status === "loading") {
+        console.log("Loading...");
         return (
             <div>
                 <Login />

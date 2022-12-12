@@ -29,7 +29,6 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 // Google O-Auth
-import Signup from './Signup';
 const clientID = "743792005372-l001hnasupsvimqur3hq32pe8ngje3rr.apps.googleusercontent.com"
 
 function Copyright(props) {
@@ -59,17 +58,12 @@ function Login() {
 
 
     // Redux to manage user state
-    // const user = useSelector(state => state.user); // Use the userReducer called "user"
+    const user = useSelector(state => state.user); // Use the userReducer called "user"
     const dispatch = useDispatch(); // Use the dispatch function to update the userReducer
-
-
-
 
 
     // const [ user, setUser ] = useState({});
     const navigate = useNavigate();
-
-    const user = selectUser; // Use the userReducer called "user"
 
 
     function handleCallbackResponse(response) {
@@ -121,20 +115,6 @@ function Login() {
     }, []);
 
 
-
-    // const onSuccess = (res) => {
-    //     console.log('[Login Success] currentUser:', res.profileObj);
-    //     navigate('/dashboard');
-    // };
-
-    // const onFailure = (res) => {
-    //     console.log('[Login failed] res:', res);
-    // };
-
-    // Get user from user (Redux)
-    const currentUser = useSelector(state => state.user); // Use the userReducer called "user"
-
-
     return (
         <ThemeProvider theme={darkTheme}>
             <Grid container component="main" sx={{ height: '100vh' }}>
@@ -164,7 +144,7 @@ function Login() {
                         }}
                     >
                         <Typography component="h1" variant="h4">
-                            ReadHub: Sign in
+                            ReadHub
                         </Typography>
                         <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
                             <LockOutlinedIcon />
@@ -193,70 +173,6 @@ function Login() {
             </Grid>
         </ThemeProvider>
     );
-
-    // return (
-    //     <Container align="center" sx={{ mt: '2rem' }}>
-    //         <Typography variant="h3">Welcome to</Typography>
-    //         <Typography variant="h1">ReadHub</Typography>
-
-
-
-
-
-    //     </Container>
-    // );
-
-
-
-
-    // const [username, setUsername] = useState("null");
-    // const [password, setPassword] = useState("null");
-
-    // function handleSubmit(e) {
-    //     e.preventDefault();
-    //     axios.post("/api2", {
-    //         uid: username,
-    //         pw: password,
-    //     })
-    //         .then(function (response) {
-    //             console.log(response);
-    //         })
-    //         .catch(function (error) {
-    //             console.log(error)
-    //         });
-    // }
-
-    // return (
-    //     <Container align="center">
-
-    //         <div>
-    //             <h2>Login</h2>
-    //             {/* <input type="text" onChange={getInputValue}/> */}
-
-    //             <label>
-    //                 Username:
-    //                 <div>
-    //                     <input
-    //                         onChange={e => setUsername(e.target.value)}
-    //                     />
-    //                 </div>
-    //                 Password:
-    //                 <div>
-    //                     <input
-    //                         onChange={e => setPassword(e.target.value)}
-    //                     />
-    //                 </div>
-    //             </label>
-
-    //             <div>
-    //                 <button onClick={handleSubmit}>
-    //                     Submit
-    //                 </button>
-    //             </div>
-
-    //         </div>
-    //     </Container>
-    // );
 }
 
 export default Login;

@@ -21,7 +21,7 @@ function Logout() {
     function handleLogout(e) {
         e.preventDefault();
         dispatch(logout());
-        navigate('/');
+        navigate('/login');
         console.log("User logged out successfully!");
     }
 
