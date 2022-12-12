@@ -46,9 +46,9 @@ function Copyright(props) {
 
 const darkTheme = createTheme({
     palette: {
-      mode: 'dark',
+        mode: 'dark',
     },
-  });
+});
 
 function Login() {
 
@@ -62,7 +62,7 @@ function Login() {
     const dispatch = useDispatch(); // Use the dispatch function to update the userReducer
 
 
-    // const [ user, setUser ] = useState({});
+    const [loggedinUser, setLoggedinUser] = useState({});
     const navigate = useNavigate();
 
 
@@ -70,30 +70,52 @@ function Login() {
         var userObject = jwt_decode(response.credential);
         console.log("User logged in successfully!");
         console.log(userObject);
-
+        console.log(typeof (response.credential));
         // Use Redux to set state of user AND set status to authenticated 
         dispatch(login(userObject)); // Here, login is the action and userObject is the action.payload 
 
         // Prepare the userRequest to be sent to the server
-        // const userRequest = {
-        //     userToken: response.credential,
-        //     firstName: userObject.firstName,
-        //     lastName: userObject.lastName,
-        //     email: userObject.email,
-        //     dp: userObject.picture
-        // }
+        const userRequest = {
+            userToken: response.credential,
+            firstName: userObject.given_name,
+            lastName: userObject.family_name,
+            email: userObject.email,
+            dp: userObject.picture
+        }
 
+        console.log("Before Axios")
 
-        // // Add user to database if not already there
+        // Add user to database if not already there
+        console.log(userRequest);
+        axios({
+            method: 'post',
+            url: '/api/users',
+            data: {
+                userToken: response.credential,
+                firstName: userObject.given_name,
+                lastName: userObject.family_name,
+                email: userObject.email,
+                dp: userObject.picture
+            }
+        })
+            .then((res) => {
+                console.log(res);
+                setLoggedinUser(res.data);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+
         // axios.post('/api/users', userRequest)
         //     .then((res) => {
         //         console.log(res);
+        //         setLoggedinUser(res.data);
         //     })
         //     .catch((err) => {
         //         console.log(err);
         //     });
 
-
+        console.log("After Axios")
 
         navigate('/dashboard');
     }

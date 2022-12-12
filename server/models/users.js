@@ -25,6 +25,10 @@ const userSchema = new Schema({
     dp: {
         type: String,
         required: false
+    },
+    websites: {
+        type: Array,
+        required: false
     }
 });
 

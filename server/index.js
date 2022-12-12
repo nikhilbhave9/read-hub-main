@@ -124,27 +124,29 @@ app.post("/api/gethighlights", function(req, res) {
 
 // Check if user exists in database otherwise add them
 app.post('/api/users', async(req, res) => {
+    console.log('User POST request received');
     const userObject = req.body;
-    User.findOne({ userToken: userObject }, (err, user) => {
-        if (err) {
-            console.log(err);
-            res.status(500).send(err);
-        } else if (user) {
-            console.log('User already exists');
-            res.status(200).send(user);
-        } else {
-            const newUser = new User(userObject);
-            newUser.save((err, user) => {
-                if (err) {
-                    console.log(err);
-                    res.status(500).send
-                } else {
-                    console.log('User added to database');
-                    res.status(200).send(user);
-                }
-            });
-        }
-    });
+    console.log(userObject);
+    // User.findOne({ userToken: userObject }, (err, user) => {
+    //     if (err) {
+    //         console.log(err);
+    //         res.status(500).send(err);
+    //     } else if (user) {
+    //         console.log('User already exists');
+    //         res.status(200).send(user);
+    //     } else {
+    //         const newUser = new User(userObject);
+    //         newUser.save((err, user) => {
+    //             if (err) {
+    //                 console.log(err);
+    //                 res.status(500).send
+    //             } else {
+    //                 console.log('User added to database');
+    //                 res.status(200).send(user);
+    //             }
+    //         });
+    //     }
+    // });
 });
 
 // Subscription Routes =========
