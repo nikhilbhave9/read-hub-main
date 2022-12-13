@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 
 // Components
@@ -45,7 +46,11 @@ function FeedSettings() {
 
 
     // Get user from redux global store
-    const user = "test";
+    // const user = "test";
+
+    // get user from redux global store
+    const dispatch = useDispatch();
+    const user = useSelector(state => state); // Use the userReducer called "user"
 
 
     // Add new website 
@@ -53,27 +58,70 @@ function FeedSettings() {
     const [newScraper, setNewScraper] = useState({});
 
     // Select subscription
-    const [currentSubscription, setCurrentSubscription] = useState("Free");
+    const [currentSubscription, setCurrentSubscription] = useState(null);
 
+    useEffect(() => {
+        if (!currentSubscription) {
+            console.log("current subscription", user.user)
+            axios({
+                method: 'post',
+                url: '/api/user/getSubscription',
+                data: {
+                    userId: user.user.email,
+                    userEmail: 'sohambagchi'
+                }
+            })
+                .then((response) => {
+                    console.log(response.data.subscriptionTier)
+                    setCurrentSubscription(response.data.subscriptionTier)
+                })
+                .catch((error) => {
+                    console.log(error)
+                })
+        }
+
+    }, [user]);
+
+
+    useEffect(() => {
+        dispatch(() => {
+            if (!currentSubscription) {
+                console.log("current subscription", user.user)
+                axios({
+                    method: 'post',
+                    url: '/api/user/getSubscription',
+                    data: {
+                        userId: user.user.email
+                    }
+                })
+                    .then((response) => {
+                        console.log(response.data.subscriptionTier)
+                        setCurrentSubscription(response.data.subscriptionTier)
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+            }
+        })
+    }, [user]);
 
     // Get current subscription from redux state OR user database
     // setCurrentSubscription("test");
 
     // Get all possible subscriptions from database
-    const [subscriptions, setSubscriptions] = useState([]);
+    const [subscriptions, setSubscriptions] = useState(["Free", "Pro", "Premium"]);
 
     useEffect(() => {
         if (subscriptions.length < 3) {
+            // log current user
+            console.log("subscriptions")
             axios({
                 method: 'get',
                 url: '/api/subscriptions',
-                // params: {
-                //     userid: user
-                // }
             })
                 .then((response) => {
-                    console.log(response.data);
-                    console.log(response.data.subscriptions);
+                    // console.log(response.data);
+                    // console.log(response.data.subscriptions);
                     response.data.subscriptions.forEach((subscription) => {
                         setSubscriptions(subscriptions => [...subscriptions, subscription]);
                     });
@@ -82,12 +130,41 @@ function FeedSettings() {
                     console.log(error);
                 });
         }
-    }, []);
+    }, [user]);
 
 
 
     // Table management
-    const [websites, setWebsites] = useState([{ "name": "testName", "url": "testURL" }]);
+    const [websites, setWebsites] = useState([]);
+
+    useEffect(() => {
+        dispatch(() => {
+            if (websites.length < 1) {
+                // log current user
+                console.log("websites", user)
+                axios({
+                    method: 'get',
+                    url: '/api/user/getWebsites',
+                    params: {
+                        userid: user.user.email
+                    }
+                })
+                    .then((response) => {
+                        // console.log(response.data);
+                        console.log(response.data.websites);
+                        response.data.websites.forEach((website) => {
+                            setWebsites(websites => [...websites, website]);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+        })
+    }, [user]);
+
+
+
     // Each website will contain: Name, URL
 
     // axios({
@@ -110,24 +187,61 @@ function FeedSettings() {
     console.log("Subs: ")
     console.log(subscriptions);
 
+    const [subscriptionChange, setSubcriptionChange] = useState({});
+
+    function handleSubscriptionChange(e) {
+        setSubcriptionChange({[e.target.key]: e.target.value});
+        e.preventDefault();
+        console.log(subscriptionChange)
+    }
+
+    function setSubscriptionChange() {
+        console.log("[USER] Changing Subscription Tier")
+        console.log(subscriptionChange)
+        axios({
+            method: 'post',
+            url: '/api/user/setSubscription',
+            data: {
+                userObject: {
+                    email: user.user.email,
+                },
+                subscriptionObject: {
+                    subscriptionTier: subscriptionChange
+                }
+            }
+        })
+            .then((res) => {
+                console.log(res)
+                setCurrentSubscription(subscriptionChange);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
     // Handle new website input
-    function handleAdd(e) {
+    function handleRSSAdd(e) {
         setNewWebsite({ ...newWebsite, [e.target.name]: e.target.value });
         e.preventDefault();
         console.log(newWebsite);
     }
 
-    function sendAdd() {
-        console.log("Sending add request");
+    function sendRSSAdd() {
+        console.log("[RSS] Adding new website...");
         console.log(newWebsite);
         axios({
             method: 'post',
-            url: '/api/websites/rss',
+            url: '/api/user/websites/addRss',
             data: {
-                // userid: user,
-                name: newWebsite.Name,
-                websiteUrl: newWebsite.URL,
-                rssUrl: newWebsite.RSS
+                userObject: {
+                    email: user.user.email,
+                },
+                websiteObject: {
+                    name: newWebsite.Name,
+                    url: newWebsite.URL,
+                    rss: newWebsite.RSS,
+                    description: newWebsite.Description,
+                }
             }
         })
             .then((res) => {
@@ -137,44 +251,45 @@ function FeedSettings() {
             .catch((err) => {
                 console.log(err);
             });
-
     }
 
     function handleScraperAdd(e) {
         setNewScraper({ ...newScraper, [e.target.name]: e.target.value });
         e.preventDefault();
-        console.log(newWebsite);
+        console.log(newScraper);
     }
 
     function sendScraperAdd() {
-        console.log("Sending: ")
+        console.log("[SCRAPE] Adding new website...")
         console.log();
         axios({
             method: 'post',
-            url: '/api/websites/rss',
+            url: '/api/user/websites/addScrape',
             data: {
-                // userid: user,
-                name: newScraper.Name,
-                websiteUrl: newScraper.URL,
-                rssUrl: newScraper.RSS,
-                archiveurl: newScraper.Archive,
-                description: newScraper.Description,
-                html_attributes:
-                {
-                    article_class: newScraper.ArticleClass,
-                    title_class: newScraper.TitleClass,
-                    title_tag: newScraper.TitleTag,
-                    date_class: newScraper,
-                    link_class: newScraper.LinkClass,
-                    link_tag: newScraper.LinkTag,
-                    pubdate_class: newScraper.PubDateClass,
-                    pubdate_tag: newScraper.PubDateTag,
-                    description_class: newScraper.DescriptionClass,
-                    description_tag: newScraper.DescriptionTag,
-                    author_class: newScraper.AuthorClass,
-                    author_tag: newScraper.AuthorTag
+                userObject: {
+                    email: user.user.email,
+                },
+                websiteObject: {
+                    name: newScraper.Name,
+                    url: newScraper.URL,
+                    archive: newScraper.Archive,
+                    description: newScraper.Description,
+                    html_attributes:
+                    {
+                        article_tag: newScraper.ArticleTag,
+                        article_class: newScraper.ArticleClass,
+                        title_class: newScraper.TitleClass,
+                        title_tag: newScraper.TitleTag,
+                        link_class: newScraper.LinkClass,
+                        link_tag: newScraper.LinkTag,
+                        pubdate_class: newScraper.PubDateClass,
+                        pubdate_tag: newScraper.PubDateTag,
+                        description_class: newScraper.DescriptionClass,
+                        description_tag: newScraper.DescriptionTag,
+                        author_class: newScraper.AuthorClass,
+                        author_tag: newScraper.AuthorTag
+                    }
                 }
-
             }
         })
             .then((res) => {
@@ -193,8 +308,12 @@ function FeedSettings() {
             method: 'delete',
             url: '/api/websites',
             data: {
-                userid: user,
-                url: e.target.value
+                userObject: {
+                    email: user.user.email,
+                },
+                websiteObject: {
+                    name: e.target.value,
+                }
             }
         })
             .then((res) => {
@@ -220,13 +339,9 @@ function FeedSettings() {
                     </Typography>
                 </Box>
 
-
                 <Typography variant='h4'>
-                    Add New
+                    Add New RSS Newsletters
                 </Typography>
-
-
-
 
                 <Box
                     component="form"
@@ -235,14 +350,14 @@ function FeedSettings() {
                     }}
                     noValidate
                     autoComplete="off"
-                    onSubmit={sendAdd}
+                    onSubmit={sendRSSAdd}
                 >
                     <TextField
                         fullWidth="true"
                         id="outlined-required"
                         label="Name"
                         name="Name"
-                        onInput={handleAdd}
+                        onInput={handleRSSAdd}
                     />
 
                     <TextField
@@ -251,7 +366,7 @@ function FeedSettings() {
                         id="outlined-required"
                         label="URL"
                         name="URL"
-                        onInput={handleAdd}
+                        onInput={handleRSSAdd}
                     />
 
                     <TextField
@@ -260,18 +375,172 @@ function FeedSettings() {
                         id="outlined-required"
                         label="RSS"
                         name="RSS"
-                        onInput={handleAdd}
+                        onInput={handleRSSAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Description"
+                        name="Description"
+                        onInput={handleRSSAdd}
                     />
 
                     <Button type="submit" variant="contained" size="small" sx={{ mt: 0, mb: 3 }}>
-                        Add
+                        Add RSS Newsletter
                     </Button>
-
-
 
                 </Box>
 
 
+                <Typography variant='h4'>
+                    Add New Non-RSS Newsletter
+                </Typography>
+
+                <Box
+                    component="form"
+                    sx={{
+                        '& .MuiTextField-root': { mt: 3, mb: 3 },
+                    }}
+                    noValidate
+                    autoComplete="off"
+                    onSubmit={sendScraperAdd}
+                >
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Name"
+                        name="Name"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        required
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="URL"
+                        name="URL"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        required
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Archive"
+                        name="Archive"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Description"
+                        name="Description"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Article Tag"
+                        name="ArticleTag"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Article Class"
+                        name="ArticleClass"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Title Tag"
+                        name="TitleTag"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Title Class"
+                        name="TitleClass"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Link Tag"
+                        name="LinkTag"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Link Class"
+                        name="LinkClass"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="PubDate Tag"
+                        name="PubDateTag"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="PubDate Class"
+                        name="PubDateClass"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Description Tag"
+                        name="DescriptionTag"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Description Class"
+                        name="DescriptionClass"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Author Tag"
+                        name="AuthorTag"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <TextField
+                        fullWidth="true"
+                        id="outlined-required"
+                        label="Author Class"
+                        name="AuthorClass"
+                        onInput={handleScraperAdd}
+                    />
+
+                    <Button type="submit" variant="contained" size="small" sx={{ mt: 0, mb: 3 }}>
+                        Add Non-RSS Newsletter
+                    </Button>
+
+                </Box>
 
 
                 <Typography variant="h4">
@@ -287,17 +556,17 @@ function FeedSettings() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {websites.map((website) => (
+                            {subscriptions.map((subscription) => (
                                 <TableRow
-                                    key={website.name}
+                                    key={subscription.name}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell component="th" scope="row">
-                                        {website.name}
+                                        {subscription.name}
                                     </TableCell>
-                                    <TableCell>{website.url}</TableCell>
+                                    <TableCell>{subscription.url}</TableCell>
                                     <TableCell align='right'>
-                                        <Button variant="contained" size="small" color="error" value={website.url} onClick={handleDelete}>Delete</Button>
+                                        <Button variant="contained" size="small" color="error" value={subscription.url} onClick={handleDelete}>Delete</Button>
                                     </TableCell>
 
                                 </TableRow>
@@ -310,7 +579,7 @@ function FeedSettings() {
 
                 <Box sx={{ mt: 3, mb: 3, p: 2 }}>
                     <Typography variant="h4">
-                        Subscriptions
+                        Subscription Tier
                     </Typography>
                     <Card sx={{ m: 2 }}>
                         <CardContent>
@@ -320,7 +589,11 @@ function FeedSettings() {
                         </CardContent>
                     </Card>
 
-                    <Box sx={{ mt: 2 }}>
+                    <Box sx={{ mt: 2 }}
+                        component="form"
+                        noValidate
+                        autoComplete="off"
+                        onSubmit={handleSubscriptionChange}>
                         <Typography variant="h5">
                             Select New Tier
                         </Typography>
@@ -331,7 +604,7 @@ function FeedSettings() {
                                 id="demo-simple-select"
                                 value={currentSubscription}
                                 label="Tier"
-                                onChange={(e) => setCurrentSubscription(e.target.value)}
+                                onChange={(e) => setSubscriptionChange(e.target.value)}
                             >
                                 {subscriptions.map((subscription) => (
                                     <MenuItem value={subscription}>{subscription}</MenuItem>

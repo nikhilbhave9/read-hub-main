@@ -16,6 +16,9 @@ const Subscription = require('./models/subscriptions');
 const Website = require('./models/websites');
 const { request } = require('express');
 
+// sha256 hash
+const sha256 = require('sha256');
+
 
 dotenv.config()
 const port = process.env.PORT || 8000;
@@ -120,88 +123,135 @@ app.post("/api/gethighlights", function(req, res) {
 });
 
 
+app.get('/api/subscriptions', async(req, res) => {
+    console.log("[SUBSCRIPTIONS] Getting All Subscriptions");
+
+    res.status(200).send(['Free', 'Pro', 'Premium'])
+})
+
+
 // User Routes =========
 
 // Check if user exists in database otherwise add them
-app.post('/api/users', async(req, res) => {
-    console.log('User POST request received');
+app.post('/api/user', async(req, res) => {
+    console.log("[USER] Checking if User Exists")
+    
     const userObject = req.body;
-    console.log(userObject);
-    // User.findOne({ userToken: userObject }, (err, user) => {
-    //     if (err) {
-    //         console.log(err);
-    //         res.status(500).send(err);
-    //     } else if (user) {
-    //         console.log('User already exists');
-    //         res.status(200).send(user);
-    //     } else {
-    //         const newUser = new User(userObject);
-    //         newUser.save((err, user) => {
-    //             if (err) {
-    //                 console.log(err);
-    //                 res.status(500).send
-    //             } else {
-    //                 console.log('User added to database');
-    //                 res.status(200).send(user);
-    //             }
-    //         });
-    //     }
-    // });
+    // extracting common part of usertoken and hashing it
+    userObject.userToken = sha256(userObject.userToken.split('.')[0]);
+    
+    User.findOne({ userToken: userObject.userToken }, (err, user) => {
+        if (err) {
+            console.error("ERROR:", err);
+            res.status(500).send(err);
+        } else if (user) {
+            console.log('[USER] User Already Exists');
+            res.status(200).send(user);
+        } else {
+            const newUser = new User(userObject);
+
+            console.log("[USER] Created New User");
+
+            newUser.save((err, user) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send(err);
+                } else {
+                    console.log('User added to database');
+                    res.status(200).send(user);
+                }
+            });
+        }
+    });
 });
 
 // Subscription Routes =========
 
 // Get the subscription of a user
-app.get('/api/subscriptions', async(req, res) => {
-    const userObject = req.query;
-    console.log(userObject.userid);
-    // Send back an array of subscription
-    res.json({
-        subscriptions: ["Free", "Premium", "Pro"]
+app.post('/api/user/getSubscription', async(req, res) => {
+    console.log("[USER] Fetching Subscription Tier");
+
+    const userObject = req.body;
+
+    console.log("getSubs", req, req.body);
+
+    console.log("userid", userObject.userId);
+    User.findOne({ email: userObject.userId }, (err, user) => {
+        if (err) {
+            console.error("ERROR:", err);
+            res.status(500).send(err);
+        } else if (user) {
+            console.log('[USER] Found');
+            res.status(200).send({subscriptions: user.subscriptionTier});
+        } else {
+            console.log('[USER] Not Found');
+            res.status(404).send();
+        }
     });
+});
 
-    // Make a fetch request to the database and get all subscriptions 
+// set the user's subscription tier
+app.post('/api/user/setSubscription', async(req, res) => {
+    console.log("[USER] Setting Subscription Tier");
+    
+    const userObject = req.body;
 
-
-
-})
-
-
+    console.log("userid", userObject.userId);
+    User.findOne({ email: userObject.userId }, (err, user) => {
+        if (err) {
+            console.error("ERROR:", err);
+            res.status(500).send(err);
+        } else if (user) {
+            console.log('[USER] Found');
+            user.subscriptionTier = userObject.subscriptionTier;
+            user.save((err, user) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send(err);
+                } else {
+                    console.log('[USER] User subscription updated');
+                    res.status(200).send(user);
+                }
+            });
+        } else {
+            console.log('[USER] Not Found');
+            res.status(404).send({ status: 404 });
+        }
+    })
+});
 // Website Routes =========
 
 // Get current websites of a user 
-app.get('/api/userWebsites', async(req, res) => {
-    const userID = req.query.userid;
-    console.log("REACHED")
-    const userObject = req.body;
-    console.log(userObject);
+app.get('/api/user/getWebsites', async(req, res) => {
+    console.log('[USER] Fetching Websites');
 
-    Article.find({})
-        .then((articles) => {
-            console.log(articles.length);
-            res.send(articles);
-        })
-        .catch((err) => {
-            console.log(err);
-            res.send({ status: 404 })
-        });
+    const userObject = req.body;
+
+    User.findOne({ email: userObject.userId }, (err, user) => {
+        if (err) {
+            console.error("ERROR:", err);
+            res.status(500).send(err
+            );
+        } else if (user) {
+            console.log('User found');
+            res.status(200).send({websites: user.websites});
+        } else {
+            console.log('User not found');
+            res.status(404).send();
+        }
+    });
 });
 
-// Add a website to a user
-app.post('/api/websites/rss', async(req, res) => {
-    console.log("POST REACHED")
-    const userObject = req.body;
-    console.log(userObject);
+// Add a website to a user (RSS)
+app.post('/api/user/websites/addRss', async(req, res) => {
+    console.log("[USER] Adding RSS Website")
 
-    const postObject = {
-        url: userObject.websiteUrl,
-        rss: userObject.rssUrl,
-        name: userObject.name
-            // description: userObject.description || null,
-    }
+    const userObject = req.body.userObject;
+    const websiteObject = req.body.websiteObject;
 
-    // use axios to make a post request to the scraper
-    scraper.post('/new_rss_url', postObject)
+    console.log(req.body)
+
+    scraper.post('/new_rss_url', websiteObject)
         .then((response) => {
             console.log(response.data);
         })
@@ -209,44 +259,121 @@ app.post('/api/websites/rss', async(req, res) => {
             console.log(err);
         });
 
+    User.findOne({ email: userObject.email }, (err, user) => {
+        if (err) {
+            console.error("ERROR:", err);
+            res.status(500).send(err);
+        } else if (user) {
+            console.log('[USER] Found');
 
+            // check user subscription tier
+            if (user.subscriptionTier === 1) {
+                if (user.websites.length >= 3) {
+                    console.log('[USER] Subscription Tier 1 Limit Reached');
+                    res.status(403).send();
+                    return;
+                }
+            } else if (user.subscriptionTier === 2) {
+                if (user.websites.length >= 10) {
+                    console.log('[USER] Subscription Tier 2 Limit Reached');
+                    res.status(403).send();
+                    return;
+                }
+            }
 
-    res.json({ message: "Returning POST ROUTE" });
-    // Make POST request to python server
-    // app.post('scraper/new_rss_url', userObject, (req, res) => {
-    //     console.log(res);
-    // })
+            user.websites.push(websiteObject);
+            user.save((err, user) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send(err);
+                } else {
+                    console.log('[USER] User website added');
+                    res.status(200).send(user);
+                }
+            });
+        } else {
+            console.log('[USER] Not Found');
+            res.status(404).send();
+        }
+    })
+});
+
+// Add a website to a user (Scrape)
+app.post('/api/user/websites/addScrape', async(req, res) => {
+    console.log("[USER] Adding Scraping Website")
+
+    const userObject = req.body.userObject;
+    const websiteObject = req.body.websiteObject;
+
+    scraper.post('/new_scrape_url', websiteObject)
+        .then((response) => {
+            console.log(response.data);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+
+    User.findOne({ email: userObject.email }, (err, user) => {
+        if (err) {
+            console.error("ERROR:", err);
+            res.status(500).send
+        } else if (user) {
+            console.log('[USER] Found');
+
+            // check user subscription tier
+            if (user.subscriptionTier === 1) {
+                if (user.websites.length >= 3) {
+                    console.log('[USER] Subscription Tier 1 Limit Reached');
+                    res.status(403).send();
+                    return;
+                }
+            } else if (user.subscriptionTier === 2) {
+                if (user.websites.length >= 10) {
+                    console.log('[USER] Subscription Tier 2 Limit Reached');
+                    res.status(403).send();
+                    return;
+                }
+            }
+
+            user.websites.push(websiteObject);
+            user.save((err, user) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send
+                } else {
+                    console.log('[USER] User website added');
+                    res.status(200).send(user);
+                }
+            });
+        } else {
+            console.log('[USER] Not Found');
+            res.status(404).send();
+        }
+    });
+});
+
+// get articles for a website
+app.get('/api/websites/getArticles', async(req, res) => {
+    console.log('[WEBSITE] Fetching Articles');
+
+    const newsletter = req.body.websiteUrl;
+
+    Article.find({ newsletter: newsletter }, (err, articles) => {
+        if (err) {
+            console.error("ERROR:", err);
+            res.status(500).send(err);
+        } else if (articles) {
+            console.log('[WEBSITE] Articles found');
+            res.status(200).send({articles: articles});
+        } else {
+            console.log('[WEBSITE] Articles not found');
+            res.status(404).send();
+        }
+    });
 });
 
 
-
 // Article Routes =========
-
-
-
-// app.post('/api/users', async (req, res) => {
-//     const userObject = req.body;
-//     User.create(userObject)
-//         .then((user) => {
-//             res.status(200).json(user);
-//         })
-//         .catch((err) => {
-//             res.status(400).json(err);
-//         });
-// });
-
-
-
-// app.get('/api/users', (req, res) => {
-//     User.find({}, (err, users) => {
-//         if (err) {
-//             res.status(500).send(err);
-//         } else {
-//             res.status(200).send(users);
-//         }
-//     });
-// });
-
 
 app.get("/api1", function(req, res) {
     res.json({ message: "Article 1" });

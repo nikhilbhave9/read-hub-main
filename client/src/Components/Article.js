@@ -16,7 +16,7 @@ function Article({ article, user }) {
     //     return new_date[0];
 
     // }
-    console.log(article.description)
+    // console.log(article.description)
 
     function add_width_to_string(string) {
         const new_string = string.replace(/<img/g, '<img width="350"');
@@ -32,7 +32,7 @@ function Article({ article, user }) {
     const tag_img_description = add_target_blank(img_description);
 
     const parsedHTML = parse(tag_img_description);
-    console.log(parsedHTML);
+    // console.log(parsedHTML);
 
     return (
         <Paper>

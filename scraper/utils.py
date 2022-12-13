@@ -10,8 +10,18 @@ class Article(BaseModel):
     description: Union[str, None] = None
     
 class HTMLAttributes(BaseModel):
+    article_tag: str
+    article_class: str
     title_tag: str
     title_class: str
+    link_tag: str
+    link_class: str
+    pubdate_tag: str
+    pubdate_class: str
+    description_tag: str
+    description_class: str
+    author_tag: str
+    author_class: str
     
 class RSSURL(BaseModel):
     url: str
@@ -19,11 +29,12 @@ class RSSURL(BaseModel):
     name: str
     description: Union[str, None] = None
 
-class URL(RSSURL):
-    title_class: str
-    author_class: str
-    date_class: str
-    description_class: str
+class URL(BaseModel):
+    name: str
+    url: str
+    archive: str
+    description: Union[str, None] = None
+    html_attributes: HTMLAttributes
     
 class REDIS_DATA(BaseModel):
     key: str

@@ -89,7 +89,7 @@ function Login() {
         console.log(userRequest);
         axios({
             method: 'post',
-            url: '/api/users',
+            url: '/api/user',
             data: {
                 userToken: response.credential,
                 firstName: userObject.given_name,
