@@ -167,7 +167,14 @@ class NewsletterScraper():
         return
     
     def find_all_articles(self):
+        
+        article_collection = self.mongo_client.fetch_collection("articles", "articles")
+        
+        scraped_articles = list()
+        
         if self.known_attributes:
-            self.find_all_articles_known()
+            scraped_articles = self.find_all_articles_known()
         else:
-            self.find_all_articles_unknown()
+            scraped_articles = self.find_all_articles_unknown()
+            
+        self.mongo_client.insert_items_to_collection(article_collection, scraped_articles)
