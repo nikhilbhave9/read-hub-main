@@ -179,7 +179,7 @@ app.post('/api/user/getSubscription', async(req, res) => {
             res.status(500).send(err);
         } else if (user) {
             console.log('[USER] Found', user.subscriptionTier);
-            res.status(200).json({subscriptions: user.subscriptionTier});
+            res.status(200).json({subscriptionTier: user.subscriptionTier});
         } else {
             console.log('[USER] Not Found');
             res.status(404).send();
