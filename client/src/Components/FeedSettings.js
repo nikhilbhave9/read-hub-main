@@ -27,9 +27,6 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-import Encrypt from '../Utilities/Encrypt';
-import Decrypt from '../Utilities/Decrypt';
-
 const columns = [
     { id: 'name', label: 'Name', minWidth: 100 },
     { id: 'url', label: 'URL', minWidth: 100 },
@@ -48,6 +45,10 @@ const rows = [
 function FeedSettings() {
 
 
+    // get user state from redux, query database on that user data, get results and render results in react 
+    
+
+
     // Get user from redux global store
     // const user = "test";
 
@@ -57,11 +58,12 @@ function FeedSettings() {
 
 
     // Add new website 
+    const [loading, setLoading] = useState(false);
     const [newWebsite, setNewWebsite] = useState({});
     const [newScraper, setNewScraper] = useState({});
 
     // Select subscription
-    const [currentSubscription, setCurrentSubscription] = useState(null);
+    const [currentSubscription, setCurrentSubscription] = useState();
 
     // useEffect(() => {
     //     if (!currentSubscription) {
@@ -96,7 +98,9 @@ function FeedSettings() {
                 }
             })
                 .then((response) => {
-                    console.log(response.data.subscriptionTier)
+                    console.log(response)
+                    console.log(response.data)
+                    console.log(response.data.subscriptions)
                     if (response.data.subscriptionTier == 1 || response.data.subscriptionTier == '1') {
                         setCurrentSubscription("Free")
                     } else if (response.data.subscriptionTier == 2 || response.data.subscriptionTier == '2') {
@@ -112,10 +116,19 @@ function FeedSettings() {
         }
     }
 
+    // useEffect(() => {
+    //     // dispatch(() => {
+    //     getUserSubscriptionAtRender();
+    //     // })
+    // }, [user]);
+
     useEffect(() => {
-        // dispatch(() => {
+        setLoading(true);
+        const timer = setTimeout(() => {
             getUserSubscriptionAtRender();
-        // })
+            setLoading(false);
+        }, 2000);
+        return () => clearTimeout(timer);
     }, [user]);
 
     // Get current subscription from redux state OR user database
@@ -185,7 +198,7 @@ function FeedSettings() {
     const [subscriptionChange, setSubcriptionChange] = useState({});
 
     function handleSubscriptionChange(e) {
-        setSubcriptionChange({[e.target.key]: e.target.value});
+        setSubcriptionChange({ [e.target.key]: e.target.value });
         e.preventDefault();
         console.log(subscriptionChange)
     }
