@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useLayoutEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 // Redux
@@ -28,6 +28,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { createTheme } from '@mui/material/styles';
 import { ThemeProvider } from '@emotion/react';
 
+import axios from 'axios';
 
 // Themes
 const theme = createTheme({
@@ -47,18 +48,72 @@ const drawerWidth = 160;
 
 function Navbar(props) {
   const { window } = props;
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [loading, setLoading] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   // Get data about the current profile logged in from redux store 
   const user = useSelector(selectUser); // Use the userReducer called "user"
 
+  const [userProfile, setUserProfile] = useState({})
+  const [currentSubscription, setCurrentSubscription] = useState();
+
   // Make a separate call to the database to get subscription plan
 
-  const profileData = {
-    name: user.given_name,
-    dp: user.picture,
-    subscription: 'Premium'
-  };
+      // get users current subscription tier 
+    // using uselayouteffect for synchronous execution
+    useLayoutEffect(() => {
+      async function getUserSubscriptionAtRender() {
+              console.log("current subscription", user)
+              axios({
+                  method: 'post',
+                  url: '/api/user/details',
+                  data: {
+                      userId: user.email
+                  }
+              })
+                  .then((response) => {
+                      console.log(response)
+                      console.log(response.data)
+                      console.log(response.data.subscriptionTier)
+                      if (response.data.subscriptionTier == 1 || response.data.subscriptionTier == '1') {
+                          setCurrentSubscription("Free");
+                      } else if (response.data.subscriptionTier == 2 || response.data.subscriptionTier == '2') {
+                          setCurrentSubscription("Pro")
+                          console.log("currentSubsPro", currentSubscription)
+                      } else if (response.data.subscriptionTier == 3 || response.data.subscriptionTier == '3') {
+                          setCurrentSubscription("Premium")
+                          console.log("currentSubsPremium", currentSubscription)
+                      }
+
+                      setUserProfile({
+                          name: response.data.firstName + ' ' + response.data.lastName,
+                          dp: response.data.dp,
+                          subscription: response.data.subscriptionTier == 1 ? "Free" :
+                                        response.data.subscriptionTier == 2 ? "Pro" : 
+                                                                            "Premium"
+                      })
+                  })
+                  .catch((error) => {
+                      console.log(error)
+                  })
+      }
+      setLoading(true);
+      const timer = setTimeout(() => {
+          getUserSubscriptionAtRender();
+          setLoading(false);
+      }, 500);
+      return () => clearTimeout(timer);
+  }, [user]);
+
+  // const userProfile = {
+  //   name: user.given_name,
+  //   dp: user.picture,
+  //   subscription: 'Premium'
+  // };
+
+  useLayoutEffect(() => {
+    console.log('hello world', userProfile)
+  }, [userProfile])
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -73,13 +128,13 @@ function Navbar(props) {
         </ListItem>
 
         <ListItem>
-          <img src={profileData.dp} alt="Profile Picture" width={drawerWidth - 40} height={drawerWidth - 60} />
+          <img src={userProfile.dp} alt="Profile Picture" width={drawerWidth - 40} height={drawerWidth - 60} />
         </ListItem>
         <ListItem>
-          <ListItemText primary={`Hi, ${profileData.name}!`} />
+          <ListItemText primary={`Hi, ${userProfile.name}!`} />
         </ListItem>
         <ListItem>
-          <ListItemText secondary={`Subscription: ${profileData.subscription}`} />
+          <ListItemText secondary={`Subscription: ${userProfile.subscription}`} />
         </ListItem>
 
         <ListItem disablePadding>

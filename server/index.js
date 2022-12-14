@@ -28,21 +28,21 @@ const port = process.env.PORT || 8000;
 
 const http_rss_options = {
     hostname: 'scraper',
-    port: 7000,
+    port: 3000,
     path: '/new_rss_url',
     method: 'POST',
 }
 
 const http_url_options = {
     hostname: 'scraper',
-    port: 7000,
+    port: 3000,
     path: '/new_url',
     method: 'POST',
 }
 
 // setup axios instance
 const scraper = axios.create({
-    baseURL: 'http://scraper:7000',
+    baseURL: 'http://scraper:3000',
     timeout: 1000,
     headers: { 'Content-Type': 'application/json' }
 });
@@ -164,6 +164,27 @@ app.post('/api/user', async(req, res) => {
     });
 });
 
+app.post('/api/user/details', async(req, res) => {
+    console.log("[USER] Checking if User Exists")
+    
+    const userObject = req.body;
+    // extracting common part of usertoken and hashing it
+    
+    User.findOne({ email: userObject.userId }, (err, user) => {
+        if (err) {
+            console.error("ERROR:", err);
+            res.status(500).send(err);
+        } else if (user) {
+            console.log('[USER] User Already Exists');
+            res.status(200).send(user);
+        } else {
+            console.log('[USER] Not Found');
+            res.status(404).send();            
+        }
+    });
+});
+
+
 // Subscription Routes =========
 
 // Get the subscription of a user
@@ -191,16 +212,16 @@ app.post('/api/user/getSubscription', async(req, res) => {
 app.post('/api/user/setSubscription', async(req, res) => {
     console.log("[USER] Setting Subscription Tier");
     
-    const userObject = req.body;
+    const userObject = req.body.userObject;
+    const subscriptionObject = req.body.subscriptionObject;
 
-    console.log("userid", userObject.userId);
     User.findOne({ email: userObject.userId }, (err, user) => {
         if (err) {
             console.error("ERROR:", err);
             res.status(500).send(err);
         } else if (user) {
             console.log('[USER] Found');
-            user.subscriptionTier = userObject.subscriptionTier;
+            user.subscriptionTier = subscriptionObject.subscriptionTier;
             user.save((err, user) => {
                 if (err) {
                     console.log(err);
@@ -227,8 +248,7 @@ app.post('/api/user/getWebsites', async(req, res) => {
     User.findOne({ email: userObject.userId }, (err, user) => {
         if (err) {
             console.error("ERROR:", err);
-            res.status(500).send(err
-            );
+            res.status(500).send(err);
         } else if (user) {
             console.log('User found', user.websites);
             res.status(200).send({websites: user.websites});
@@ -256,7 +276,7 @@ app.post('/api/user/websites/addRss', async(req, res) => {
             console.log(err);
         });
 
-    User.findOne({ email: userObject.email }, (err, user) => {
+    User.findOne({ email: userObject.userId }, (err, user) => {
         if (err) {
             console.error("ERROR:", err);
             res.status(500).send(err);
@@ -350,10 +370,10 @@ app.post('/api/user/websites/addScrape', async(req, res) => {
 });
 
 // get articles for a website
-app.get('/api/websites/getArticles', async(req, res) => {
+app.post('/api/websites/getArticles', async(req, res) => {
     console.log('[WEBSITE] Fetching Articles');
 
-    const newsletter = req.body.websiteUrl;
+    const newsletter = req.body.website;
 
     Article.find({ newsletter: newsletter }, (err, articles) => {
         if (err) {

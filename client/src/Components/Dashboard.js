@@ -1,5 +1,5 @@
 // Imports
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
 
 // Components
 import Navbar from './Navbar';
@@ -23,7 +23,7 @@ function Dashboard() {
     const user = useSelector(state => state.user); // Use the userReducer called "user"
     // OR
     // const user = useSelector(selectUser)
-    console.log(user)
+    console.log("user", user)
 
     // Set State
 
@@ -37,85 +37,98 @@ function Dashboard() {
     const [articles, setArticles] = useState([]);
 
     // Fetch subscription tier from backend
-    useEffect(() => {
-        // wait for user to be fetched from redux state
-        if (!user.email) {
-            return;
-        } else {
+    useLayoutEffect(() => {
+        console.log("userSubscription", user, user.user.email)
+        async function getUserSubscriptionDetails() {
             axios({
-                method: 'get',
-                url: '/api/user/getSubscription',
-                data: {
-                    userId: user.email
+            method: 'post',
+            url: '/api/user/getSubscription',
+            data: {
+                userId: user.user.email
+            }
+        })
+            .then(res => {
+                if (!res.data) {
+                    setSubscription("Unknown [500]");
+                    return;
                 }
-            })
-                .then(res => {
-                    if (!res.data) {
-                        setSubscription("Unknown [500]");
-                        return;
-                    }
 
-                    if (res.data == 1) {
-                        setSubscription("Free");
-                    } else if (res.data == 2) {
-                        setSubscription("Premium");
-                    } else if (res.data == 3) {
-                        setSubscription("Enterprise");
-                    }
-                    
-                    console.log(subscription);
-                })
-                .catch(err => console.log(err));
+                if (res.data == 1) {
+                    setSubscription("Free");
+                } else if (res.data == 2) {
+                    setSubscription("Premium");
+                } else if (res.data == 3) {
+                    setSubscription("Enterprise");
+                }
+                
+                console.log(subscription);
+            })
+            .catch(err => console.log(err));
         }
-    }, []);
+        getUserSubscriptionDetails();        
+    }, [user]);
 
     // Fetch websites from backend
-    useEffect(() => {
-        // wait for user to be fetched from redux state
-        if (!user.email) {
-            return;
-        } else {
+    useLayoutEffect(() => {
+        console.log("userWebsites", user, user.user.email)
+        async function getUserWebsitesAndArticles() {
             axios({
-                method: 'get',
-                url: '/api/user/getWebsites',
-                data: {
-                    userId: user.email
+            method: 'post',
+            url: '/api/user/getWebsites',
+            data: {
+                userId: user.user.email
+            }
+        })
+            .then(res => {
+                if (!res.data) {
+                    setWebsites(["Unknown [500]"]);
+                    return;
                 }
+                console.log("0x0", res);
+                console.log("0x1", res.data);
+                console.log("0x2", res.data.websites);
+                setWebsites(res.data.websites);
+                console.log("0x3", websites);
             })
-                .then(res => {
-                    if (!res.data) {
-                        setWebsites(["Unknown [500]"]);
-                        return;
-                    }
-                    setWebsites(res.data.websites);
-                    console.log(websites);
+            .catch(err => console.log(err));
+        }
+        getUserWebsitesAndArticles();
+    }, [user]);
 
-                    for (let i = 0; i < websites.length; i++) {
-                        // console.log(websites[i]);
-                        axios({
-                            method: 'get',
-                            url: '/api/websites/getArticles',
-                            data: {
-                                website: websites[i].url
-                            }
-                        })
-                            .then(res => {
-                                if (!res.data) {
-                                    return;
-                                }
-                                // append data to articles
-                                setArticles(articles => [...articles, res.data]);
-                                console.log(res.data);
-                            })
-                            .catch(err => console.log(err));
+    useLayoutEffect(() => {
+        console.log("websites", websites, articles);
+        async function getArticlesForWebsites() {
+            for (let i = 0; i < websites.length; i++) {
+                console.log(websites[i]);
+                axios({
+                    method: 'post',
+                    url: '/api/websites/getArticles',
+                    data: {
+                        website: websites[i].url
                     }
                 })
-                .catch(err => console.log(err));
+                    .then(res => {
+                        if (!res.data) {
+                            return;
+                        }
+                        console.log("1x1", res.data);
+                        // append data to articles
+                        setArticles(articles => [...articles, ...res.data.articles]);
+                        
+                        console.log("1xx1", res.data);
+                        console.log("1xx2", articles);
+
+                    })
+                    .catch(err => console.log(err));
+            }
         }
-    }, []);
-    
+        getArticlesForWebsites();
+    }, [websites])
 
-
+    useLayoutEffect(() => {
+        console.log("hello world")
+        console.log("2x0", articles)
+    }, [articles])
 
     return (
         <>
@@ -156,7 +169,7 @@ function Dashboard() {
                 </Grid> */}
 
 
-                <Grid container columnSpacing={2}>
+                <Grid container columnSpacing={2} rowSpacing={2}>
                     {  // render string if no articles
                         articles.length === 0 ? <h3>No articles found</h3> :
                             // render articles

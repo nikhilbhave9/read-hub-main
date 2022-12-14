@@ -32,7 +32,7 @@ services:
             MONGO_INITDB_ROOT_USERNAME: root
             MONGO_INITDB_ROOT_PASSWORD: example
         ports:
-            - 27017:27017
+            - 4000:27017
         volumes:
             - ./mongodb:/data/db
         networks:
@@ -56,11 +56,11 @@ services:
         image: python
         build: ./scraper
         restart: always
-        command: uvicorn main:app --reload --host 0.0.0.0 --port 7000
+        command: uvicorn main:app --reload --host 0.0.0.0 --port 3000
         volumes: 
             - ./scraper:/usr/src/scraper
         ports:
-            - 7000:7000
+            - 3000:3000
         networks:
             - mern-app
         links:
@@ -75,7 +75,7 @@ services:
         volumes:
             - ./cache:/data
         ports:
-            - "6379:6379"
+            - "5050:6379"
         networks:
             - mern-app
 

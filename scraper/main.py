@@ -17,7 +17,7 @@ app = FastAPI()
 
 mongo_client = MongoUtils(location=MONGO_LOCATION)
 
-rd = redis.Redis(host='cache', port=6379, db=0, password='foobared')
+rd = redis.Redis(host='cache', port=5050, db=0, password='foobared')
 
 # scheduler = BackgroundScheduler()
 # scheduler.add_job(func=daily_parse_and_scrape, trigger="interval", days=1)

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
@@ -27,31 +27,8 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
-const columns = [
-    { id: 'name', label: 'Name', minWidth: 100 },
-    { id: 'url', label: 'URL', minWidth: 100 },
-    { id: 'Delete', label: 'Delete', minWidth: 50 },
-
-];
-
-
-const rows = [
-    ['India', 'IN', 1324171354, 3287263],
-    ['China', 'CN', 1403500365, 9596961]
-];
-
-
 
 function FeedSettings() {
-
-
-    // get user state from redux, query database on that user data, get results and render results in react 
-    
-
-
-    // Get user from redux global store
-    // const user = "test";
-
     // get user from redux global store
     const dispatch = useDispatch();
     const user = useSelector(state => state); // Use the userReducer called "user"
@@ -62,81 +39,14 @@ function FeedSettings() {
     const [newWebsite, setNewWebsite] = useState({});
     const [newScraper, setNewScraper] = useState({});
 
-    // Select subscription
-    const [currentSubscription, setCurrentSubscription] = useState();
-
-    // useEffect(() => {
-    //     if (!currentSubscription) {
-    //         console.log("current subscription", user.user)
-    //         axios({
-    //             method: 'get',
-    //             url: '/api/user/getSubscription',
-    //             params: {
-    //                 userId: encryptString(user.user.email, "secret"),
-    //                 userEmail: 'sohambagchi'
-    //             }
-    //         })
-    //             .then((response) => {
-    //                 console.log(response.data.subscriptionTier)
-    //                 setCurrentSubscription(response.data.subscriptionTier)
-    //             })
-    //             .catch((error) => {
-    //                 console.log(error)
-    //             })
-    //     }
-
-    // }, [user]);
-
-    function getUserSubscriptionAtRender() {
-        if (!currentSubscription) {
-            console.log("current subscription", user.user)
-            axios({
-                method: 'post',
-                url: '/api/user/getSubscription',
-                data: {
-                    userId: user.user.user.email
-                }
-            })
-                .then((response) => {
-                    console.log(response)
-                    console.log(response.data)
-                    console.log(response.data.subscriptions)
-                    if (response.data.subscriptionTier == 1 || response.data.subscriptionTier == '1') {
-                        setCurrentSubscription("Free")
-                    } else if (response.data.subscriptionTier == 2 || response.data.subscriptionTier == '2') {
-                        setCurrentSubscription("Pro")
-                    } else if (response.data.subscriptionTier == 3 || response.data.subscriptionTier == '3') {
-                        setCurrentSubscription("Premium")
-                    }
-                    // setCurrentSubscription(response.data.subscriptionTier)
-                })
-                .catch((error) => {
-                    console.log(error)
-                })
-        }
-    }
-
-    // useEffect(() => {
-    //     // dispatch(() => {
-    //     getUserSubscriptionAtRender();
-    //     // })
-    // }, [user]);
-
-    useEffect(() => {
-        setLoading(true);
-        const timer = setTimeout(() => {
-            getUserSubscriptionAtRender();
-            setLoading(false);
-        }, 2000);
-        return () => clearTimeout(timer);
-    }, [user]);
-
-    // Get current subscription from redux state OR user database
-    // setCurrentSubscription("test");
-
-    // Get all possible subscriptions from database
     const [subscriptions, setSubscriptions] = useState(["Free", "Pro", "Premium"]);
 
+    // Select subscription
+    const [websites, setWebsites] = useState([]);
+    const [currentSubscription, setCurrentSubscription] = useState();
+    const [subscriptionChange, setSubscriptionChange] = useState();
+
+    // get available subscription tiers
     useEffect(() => {
         if (subscriptions.length < 3) {
             // log current user
@@ -158,54 +68,78 @@ function FeedSettings() {
         }
     }, [user]);
 
-
-
-    // Table management
-    const [websites, setWebsites] = useState([]);
-
-    function getUserWebsitesAtRender() {
-        if (websites.length < 1) {
-            // log current user
-            console.log("websites", user)
-            axios({
-                method: 'post',
-                url: '/api/user/getWebsites',
-                data: {
-                    userId: user.user.user.email
-                }
-            })
-                .then((response) => {
-                    // console.log(response.data);
-                    console.log(response.data.websites);
-                    response.data.websites.forEach((website) => {
-                        setWebsites(websites => [...websites, website]);
-                    });
+    // get users current subscription tier 
+    // using uselayouteffect for synchronous execution
+    useLayoutEffect(() => {
+        async function getUserSubscriptionAtRender() {
+                console.log("current subscription", user.user)
+                axios({
+                    method: 'post',
+                    url: '/api/user/getSubscription',
+                    data: {
+                        userId: user.user.user.email
+                    }
                 })
-                .catch((error) => {
-                    console.error(error);
-                });
+                    .then((response) => {
+                        console.log(response)
+                        console.log(response.data)
+                        console.log(response.data.subscriptionTier)
+                        if (response.data.subscriptionTier == 1 || response.data.subscriptionTier == '1') {
+                            setCurrentSubscription("Free");
+                        } else if (response.data.subscriptionTier == 2 || response.data.subscriptionTier == '2') {
+                            setCurrentSubscription("Pro")
+                            console.log("currentSubsPro", currentSubscription)
+                        } else if (response.data.subscriptionTier == 3 || response.data.subscriptionTier == '3') {
+                            setCurrentSubscription("Premium")
+                            console.log("currentSubsPremium", currentSubscription)
+                        }
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
         }
-    }
+        setLoading(true);
+        const timer = setTimeout(() => {
+            getUserSubscriptionAtRender();
+            setLoading(false);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [user]);
 
+    // get all websites that user is subscribed to
 
-    useEffect(() => {
-        dispatch(() => {
-            getUserWebsitesAtRender();
-        })
+    useLayoutEffect(() => {
+        async function getUserWebsitesAtRender() {
+            if (websites.length < 1) {
+                // log current user
+                console.log("websites", user)
+                axios({
+                    method: 'post',
+                    url: '/api/user/getWebsites',
+                    data: {
+                        userId: user.user.user.email
+                    }
+                })
+                    .then((response) => {
+                        // console.log(response.data);
+                        console.log(response.data.websites);
+                        response.data.websites.forEach((website) => {
+                            setWebsites(websites => [...websites, website]);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error(error);
+                    });
+            }
+        }
+        getUserWebsitesAtRender();
     }, [user]);
 
 
-    const [subscriptionChange, setSubcriptionChange] = useState({});
-
-    function handleSubscriptionChange(e) {
-        setSubcriptionChange({ [e.target.key]: e.target.value });
+    function handleSubscriptionSubmit(e) {
         e.preventDefault();
-        console.log(subscriptionChange)
-    }
-
-    function setSubscriptionChange() {
         console.log("[USER] Changing Subscription Tier")
-        console.log(subscriptionChange)
+        console.log(subscriptionChange, user)
         axios({
             method: 'post',
             url: '/api/user/setSubscription',
@@ -214,7 +148,10 @@ function FeedSettings() {
                     userId: user.user.user.email,
                 },
                 subscriptionObject: {
-                    subscriptionTier: subscriptionChange
+                    subscriptionTier:   1 ? subscriptionChange == "Free" : 
+                                        2 ? subscriptionChange == "Pro" : 
+                                        3 ? subscriptionChange == "Premium" : 
+                                        1
                 }
             }
         })
@@ -225,6 +162,13 @@ function FeedSettings() {
             .catch((err) => {
                 console.log(err);
             })
+    }
+
+    function handleSubscriptionChange(e) {
+        e.preventDefault();
+        setSubscriptionChange(e.target.value);
+        console.log("THIS IS THE SUBSCRIPTION CHANGE")
+        console.log(subscriptionChange)
     }
 
     // Handle new website input
@@ -564,17 +508,17 @@ function FeedSettings() {
                             </TableRow>
                         </TableHead>
                         <TableBody>
-                            {subscriptions.map((subscription) => (
+                            {websites.map((website) => (
                                 <TableRow
-                                    key={subscription.name}
+                                    key={website.name}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                 >
                                     <TableCell component="th" scope="row">
-                                        {subscription.name}
+                                        {website.name}
                                     </TableCell>
-                                    <TableCell>{subscription.url}</TableCell>
+                                    <TableCell>{website.url}</TableCell>
                                     <TableCell align='right'>
-                                        <Button variant="contained" size="small" color="error" value={subscription.url} onClick={handleDelete}>Delete</Button>
+                                        <Button variant="contained" size="small" color="error" value={website.url} onClick={handleDelete}>Delete</Button>
                                     </TableCell>
 
                                 </TableRow>
@@ -601,7 +545,7 @@ function FeedSettings() {
                         component="form"
                         noValidate
                         autoComplete="off"
-                        onSubmit={handleSubscriptionChange}>
+                        onSubmit={handleSubscriptionSubmit}>
                         <Typography variant="h5">
                             Select New Tier
                         </Typography>
@@ -612,13 +556,16 @@ function FeedSettings() {
                                 id="demo-simple-select"
                                 value={currentSubscription}
                                 label="Tier"
-                                onChange={(e) => setSubscriptionChange(e.target.value)}
+                                onChange={handleSubscriptionChange}
                             >
                                 {subscriptions.map((subscription) => (
                                     <MenuItem value={subscription}>{subscription}</MenuItem>
                                 ))}
 
                             </Select>
+                            <Button variant="contained" type="submit">
+                                Submit
+                            </Button>
                         </FormControl>
                     </Box>
                 </Box>
