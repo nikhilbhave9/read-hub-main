@@ -27,6 +27,9 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 
+import Encrypt from '../Utilities/Encrypt';
+import Decrypt from '../Utilities/Decrypt';
+
 const columns = [
     { id: 'name', label: 'Name', minWidth: 100 },
     { id: 'url', label: 'URL', minWidth: 100 },
@@ -60,49 +63,59 @@ function FeedSettings() {
     // Select subscription
     const [currentSubscription, setCurrentSubscription] = useState(null);
 
-    useEffect(() => {
+    // useEffect(() => {
+    //     if (!currentSubscription) {
+    //         console.log("current subscription", user.user)
+    //         axios({
+    //             method: 'get',
+    //             url: '/api/user/getSubscription',
+    //             params: {
+    //                 userId: encryptString(user.user.email, "secret"),
+    //                 userEmail: 'sohambagchi'
+    //             }
+    //         })
+    //             .then((response) => {
+    //                 console.log(response.data.subscriptionTier)
+    //                 setCurrentSubscription(response.data.subscriptionTier)
+    //             })
+    //             .catch((error) => {
+    //                 console.log(error)
+    //             })
+    //     }
+
+    // }, [user]);
+
+    function getUserSubscriptionAtRender() {
         if (!currentSubscription) {
             console.log("current subscription", user.user)
             axios({
                 method: 'post',
                 url: '/api/user/getSubscription',
                 data: {
-                    userId: user.user.email,
-                    userEmail: 'sohambagchi'
+                    userId: user.user.user.email
                 }
             })
                 .then((response) => {
                     console.log(response.data.subscriptionTier)
-                    setCurrentSubscription(response.data.subscriptionTier)
+                    if (response.data.subscriptionTier == 1 || response.data.subscriptionTier == '1') {
+                        setCurrentSubscription("Free")
+                    } else if (response.data.subscriptionTier == 2 || response.data.subscriptionTier == '2') {
+                        setCurrentSubscription("Pro")
+                    } else if (response.data.subscriptionTier == 3 || response.data.subscriptionTier == '3') {
+                        setCurrentSubscription("Premium")
+                    }
+                    // setCurrentSubscription(response.data.subscriptionTier)
                 })
                 .catch((error) => {
                     console.log(error)
                 })
         }
-
-    }, [user]);
-
+    }
 
     useEffect(() => {
-        dispatch(() => {
-            if (!currentSubscription) {
-                console.log("current subscription", user.user)
-                axios({
-                    method: 'post',
-                    url: '/api/user/getSubscription',
-                    data: {
-                        userId: user.user.email
-                    }
-                })
-                    .then((response) => {
-                        console.log(response.data.subscriptionTier)
-                        setCurrentSubscription(response.data.subscriptionTier)
-                    })
-                    .catch((error) => {
-                        console.log(error)
-                    })
-            }
-        })
+        // dispatch(() => {
+            getUserSubscriptionAtRender();
+        // })
     }, [user]);
 
     // Get current subscription from redux state OR user database
@@ -137,55 +150,37 @@ function FeedSettings() {
     // Table management
     const [websites, setWebsites] = useState([]);
 
+    function getUserWebsitesAtRender() {
+        if (websites.length < 1) {
+            // log current user
+            console.log("websites", user)
+            axios({
+                method: 'post',
+                url: '/api/user/getWebsites',
+                data: {
+                    userId: user.user.user.email
+                }
+            })
+                .then((response) => {
+                    // console.log(response.data);
+                    console.log(response.data.websites);
+                    response.data.websites.forEach((website) => {
+                        setWebsites(websites => [...websites, website]);
+                    });
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+        }
+    }
+
+
     useEffect(() => {
         dispatch(() => {
-            if (websites.length < 1) {
-                // log current user
-                console.log("websites", user)
-                axios({
-                    method: 'get',
-                    url: '/api/user/getWebsites',
-                    params: {
-                        userid: user.user.email
-                    }
-                })
-                    .then((response) => {
-                        // console.log(response.data);
-                        console.log(response.data.websites);
-                        response.data.websites.forEach((website) => {
-                            setWebsites(websites => [...websites, website]);
-                        });
-                    })
-                    .catch((error) => {
-                        console.error(error);
-                    });
-            }
+            getUserWebsitesAtRender();
         })
     }, [user]);
 
-
-
-    // Each website will contain: Name, URL
-
-    // axios({
-    //     method: 'get',
-    //     url: '/api/websites',
-    //     data: {
-    //         userid: user
-    //     }
-    // })
-    //     .then((res) => {
-    //         console.log(res);
-    //         setWebsites(res.data); // SHOULD RETURN AN ARRAY OF WEBSITE OBJECTS
-    //     })
-    //     .catch((err) => {
-    //         console.log(err);
-    //     });
-
-
-    // End of Table
-    console.log("Subs: ")
-    console.log(subscriptions);
 
     const [subscriptionChange, setSubcriptionChange] = useState({});
 
@@ -203,7 +198,7 @@ function FeedSettings() {
             url: '/api/user/setSubscription',
             data: {
                 userObject: {
-                    email: user.user.email,
+                    userId: user.user.user.email,
                 },
                 subscriptionObject: {
                     subscriptionTier: subscriptionChange
@@ -234,7 +229,7 @@ function FeedSettings() {
             url: '/api/user/websites/addRss',
             data: {
                 userObject: {
-                    email: user.user.email,
+                    userId: user.user.user.email,
                 },
                 websiteObject: {
                     name: newWebsite.Name,
@@ -267,7 +262,7 @@ function FeedSettings() {
             url: '/api/user/websites/addScrape',
             data: {
                 userObject: {
-                    email: user.user.email,
+                    userId: user.user.user.email,
                 },
                 websiteObject: {
                     name: newScraper.Name,
@@ -309,7 +304,7 @@ function FeedSettings() {
             url: '/api/websites',
             data: {
                 userObject: {
-                    email: user.user.email,
+                    userId: user.user.user.email,
                 },
                 websiteObject: {
                     name: e.target.value,

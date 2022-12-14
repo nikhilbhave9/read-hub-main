@@ -16,6 +16,7 @@ const Subscription = require('./models/subscriptions');
 const Website = require('./models/websites');
 const { request } = require('express');
 
+
 // sha256 hash
 const sha256 = require('sha256');
 
@@ -106,8 +107,6 @@ app.use(bodyParser.json());
 // ====================================================
 
 
-
-
 app.get("/", function(req, res) {
     res.send("Hello, world!");
 });
@@ -172,16 +171,14 @@ app.post('/api/user/getSubscription', async(req, res) => {
     console.log("[USER] Fetching Subscription Tier");
 
     const userObject = req.body;
-
-    console.log("getSubs", req, req.body);
-
-    console.log("userid", userObject.userId);
+    console.log("getSubs", userObject);
+    
     User.findOne({ email: userObject.userId }, (err, user) => {
         if (err) {
             console.error("ERROR:", err);
             res.status(500).send(err);
         } else if (user) {
-            console.log('[USER] Found');
+            console.log('[USER] Found', user.subscriptionTier);
             res.status(200).send({subscriptions: user.subscriptionTier});
         } else {
             console.log('[USER] Not Found');
@@ -222,18 +219,18 @@ app.post('/api/user/setSubscription', async(req, res) => {
 // Website Routes =========
 
 // Get current websites of a user 
-app.get('/api/user/getWebsites', async(req, res) => {
+app.post('/api/user/getWebsites', async(req, res) => {
     console.log('[USER] Fetching Websites');
 
     const userObject = req.body;
-
+    console.log("getWebsites", userObject.userId);
     User.findOne({ email: userObject.userId }, (err, user) => {
         if (err) {
             console.error("ERROR:", err);
             res.status(500).send(err
             );
         } else if (user) {
-            console.log('User found');
+            console.log('User found', user.websites);
             res.status(200).send({websites: user.websites});
         } else {
             console.log('User not found');
