@@ -47,14 +47,14 @@ class NewsletterScraper():
         self.NO_AUTHOR = False
         self.NO_DESCRIPTION = False
 
-    def load_newsletter_page(self, url, known_attributes=None):
+    def load_newsletter_page(self, url, archive_url, known_attributes=None):
         """
         Driver loads newsletter page, and if HTML classnames are 
         provided, sets them as class variables
         """
         
         self.home_url = url
-        self.driver.get(url)
+        self.driver.get(archive_url)
         
         if known_attributes:
             self.article_attr     = known_attributes["article"]

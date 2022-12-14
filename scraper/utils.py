@@ -34,7 +34,7 @@ class URL(BaseModel):
     url: str
     archive: str
     description: Union[str, None] = None
-    html_attributes: HTMLAttributes
+    html_attributes: Union[HTMLAttributes, None] = None
     
 class REDIS_DATA(BaseModel):
     key: str

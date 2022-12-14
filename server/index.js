@@ -322,6 +322,8 @@ app.post('/api/user/websites/addScrape', async(req, res) => {
     const userObject = req.body.userObject;
     const websiteObject = req.body.websiteObject;
 
+    // console.log("3xx3", websiteObject)
+
     scraper.post('/new_scrape_url', websiteObject)
         .then((response) => {
             console.log(response.data);
@@ -333,10 +335,9 @@ app.post('/api/user/websites/addScrape', async(req, res) => {
     User.findOne({ email: userObject.email }, (err, user) => {
         if (err) {
             console.error("ERROR:", err);
-            res.status(500).send
+            res.status(500).send();
         } else if (user) {
             console.log('[USER] Found');
-
             // check user subscription tier
             if (user.subscriptionTier === 1) {
                 if (user.websites.length >= 3) {

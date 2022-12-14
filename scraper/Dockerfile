@@ -4,6 +4,6 @@ COPY requirements.txt requirements.txt
 RUN apk add build-base
 RUN apk add libffi-dev
 RUN pip install -r requirements.txt
-EXPOSE 7000
+EXPOSE 3000
 COPY . .
 # CMD ["uvicorn", "main:app", "--reload", "--host", "0.0.0.0"]
