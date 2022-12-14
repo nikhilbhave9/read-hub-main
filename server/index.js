@@ -322,7 +322,7 @@ app.post('/api/user/websites/addScrape', async(req, res) => {
     const userObject = req.body.userObject;
     const websiteObject = req.body.websiteObject;
 
-    // console.log("3xx3", websiteObject)
+    // console.log("3xx3", websiteObject, userObject)
 
     scraper.post('/new_scrape_url', websiteObject)
         .then((response) => {
@@ -332,7 +332,7 @@ app.post('/api/user/websites/addScrape', async(req, res) => {
             console.log(err);
         });
 
-    User.findOne({ email: userObject.email }, (err, user) => {
+    User.findOne({ email: userObject.userId }, (err, user) => {
         if (err) {
             console.error("ERROR:", err);
             res.status(500).send();
